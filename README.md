@@ -2,3 +2,5 @@
 ====
 
 # pythonmark
+## 排序
+[八种排序方法](./sort/sort.md)
