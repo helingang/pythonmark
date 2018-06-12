@@ -69,3 +69,23 @@ def sortList3(list):
 ```
 
 ## 快速排序(二分)
+1. 思路
+    1. 从列表中部取一个元素,比这个元素小的放在l列表,大的放在r列表,然后递归,直到参数长度小于等于1
+2. 实现
+```
+def sortList4(list):
+    n = len(list) // 2
+    l = []
+    r = []
+    for i in range(0, len(list)):
+        if list[i] != list[n]:
+            if list[i] < list[n]:
+                l.append(list[i])
+            else:
+                r.append(list[i])
+    if len(l) > 0:
+        l = sortList4(l)
+    if len(r) > 0:
+        r = sortList4(r)
+    return l + [list[n]] + r
+```

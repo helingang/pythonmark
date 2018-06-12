@@ -43,4 +43,20 @@ def sortList3(list):
         newList.insert(mk, list[i])
     return newList
 
-print(sortList3(list))
+def sortList4(list):
+    n = len(list) // 2
+    l = []
+    r = []
+    for i in range(0, len(list)):
+        if list[i] != list[n]:
+            if list[i] < list[n]:
+                l.append(list[i])
+            else:
+                r.append(list[i])
+    if len(l) > 0:
+        l = sortList4(l)
+    if len(r) > 0:
+        r = sortList4(r)
+    return l + [list[n]] + r
+
+print(sortList4(list2))
