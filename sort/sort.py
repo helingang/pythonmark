@@ -30,4 +30,17 @@ def sortList2(list):
         list[mk] = temp
     return list
 
-print(sortList2(list))
+# 插入排序
+def sortList3(list):
+    newList = []
+    if len(newList) == 0:
+        newList.append(list[0])
+    for i in range(1, len(list)):
+        mk = 0
+        for j in range(0, len(newList)):
+            if list[i] > newList[j]:
+                mk = j + 1
+        newList.insert(mk, list[i])
+    return newList
+
+print(sortList3(list))

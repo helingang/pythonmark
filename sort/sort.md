@@ -50,3 +50,22 @@ def sortList2(list):
         list[mk] = temp
     return list
 ```
+## 插入排序
+1. 思路
+    1. 将元素按序放入已有序的数组中
+2. 实现
+```
+def sortList3(list):
+    newList = []
+    if len(newList) == 0:
+        newList.append(list[0])
+    for i in range(1, len(list)):
+        mk = 0
+        for j in range(0, len(newList)):
+            if list[i] > newList[j]:
+                mk = j + 1
+        newList.insert(mk, list[i])
+    return newList
+```
+
+## 快速排序(二分)
