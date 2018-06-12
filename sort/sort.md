@@ -3,7 +3,7 @@
 1. 思路
     1. 两两交换,第一次排序后最大值在末尾
     2. 第n趟排序需要排序n - 1次(n个数)
-2. 片段
+2. 实现
 ```
 def sortList(list):
     for i in range(0, len(list) - 1):
@@ -32,4 +32,21 @@ def sortList(list):
 ```
 
 ## 选择排序
-
+1. 思路
+    1. 趟数为n - 1(n个数)
+    2. 定义标志位,每趟循环比较标志位的元素与其他元素,找到最大值/最小值,并更新标志位
+    3. 将最大值/最小值与标志位交换位置
+2. 实现
+```
+def sortList2(list):
+    length = len(list)
+    for i in range(0, length):
+        mk = i
+        for j in range(i, length):
+            if list[i] > list[j]:
+                mk = j
+        temp = list[i]
+        list[i] = list[mk]
+        list[mk] = temp
+    return list
+```
