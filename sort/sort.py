@@ -59,4 +59,5 @@ def sortList4(list):
         r = sortList4(r)
     return l + [list[n]] + r
 
+print(type(sortList4))
 print(sortList4(list2))
