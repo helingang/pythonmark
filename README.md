@@ -2,6 +2,7 @@
 ====
 
 # python
+[计算机相关知识](./python/pc.md)
 [python学习笔记](./python/python.md)
 # 算法
 ## 排序
