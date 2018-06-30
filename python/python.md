@@ -16,7 +16,7 @@
 1. 高级语言=>机器语言, 接近人类语言=>接近机器语言
 2. 高级语言和低级语言需要转换的工具: 编译器和解释器
 ## 语言的运行
-1. C,C++等语言的源代码需要本地编译
+1. C,C++等语言的源代码需要本地编译(本地代码比在虚拟机运行效率高)
 2. Java,python,C#的源代码需要被解释器编译成中间代码(ByteCode),在虚拟机上运行
 ## 语言分类
 1. 编译语言: 把源代码直接转换成目标机器的CPU指令 
@@ -39,8 +39,8 @@
 # python的解释器
 1. 官方CPython: C语言开发,最广泛的解释器
 2. IPython: 一个交互式,功能增强的Cpython
-3. PyPy: Python语言写的Python解释器,JIT(just in time)技术,动态编译Python代码
-4. Jython: Python的源代码编译成Java的字节码,跑在JVM上
+3. PyPy: Python语言写的Python解释器,JIT(just in time)技术,**动态**编译Python代码
+4. Jython: Python的源代码编译成Java的字节码,跑在JVM(java 虚拟机)上
 5. IronPython: 与Jython类似,运行在.Net平台上的解释器,Python代码被编译成.Net字节码
 
 
