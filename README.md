@@ -2,5 +2,6 @@
 ====
 
 # python
-## 排序
-[八种排序方法](./sort/sort.md)
+[python学习笔记](./python/python.md)
+# 排序
+[几种排序方法](./sort/sort.md)
