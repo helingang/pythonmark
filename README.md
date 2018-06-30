@@ -3,5 +3,6 @@
 
 # python
 [python学习笔记](./python/python.md)
-# 排序
+# 算法
+## 排序
 [几种排序方法](./sort/sort.md)
