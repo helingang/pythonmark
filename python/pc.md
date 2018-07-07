@@ -36,12 +36,7 @@
     3. 无法把数据设计转换成数据结构,无法把处理方法转换成算法
     4. 无法用设计范式来进行程序设计
 
-# python的解释器
-1. 官方CPython: C语言开发,最广泛的解释器
-2. IPython: 一个交互式,功能增强的Cpython
-3. PyPy: Python语言写的Python解释器,JIT(just in time)技术,**动态**编译Python代码
-4. Jython: Python的源代码编译成Java的字节码,跑在JVM(java 虚拟机)上
-5. IronPython: 与Jython类似,运行在.Net平台上的解释器,Python代码被编译成.Net字节码
+
 
 
 
