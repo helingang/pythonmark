@@ -12,7 +12,7 @@
     1. 不区分`long`和`int`
     2. 长度没限制
     3. 进制(十六进制 0x;二进制 0b)
-    4. 布尔, True, False
+    4. 布尔, True(1), False(0)
 2. 浮点型(科学计数法)
     1. 1.23*10<sup>9</sup>等于`1.23e9`
     2. 浮点型计算是不精确的,例如`1.2 - 1`得到0.19999999999999996
@@ -31,7 +31,11 @@ print(a - b)
 ## 基础语法
 ### 转义字符
 1. `\n`换行
-2. `\t`制表符tab
+2. `\t`制表符
+3. `\b`退格BackSpace
+4. `\r`回车,当前位置移到本行开头(退格到开头)
+5. `\0`代表空字符
+6. `\a`系统提示音
 ### 缩进
 1. 4空格缩进
 ### 续行
@@ -125,7 +129,11 @@ ASCII码指的是字母和一些字符,例如A是65
 |A|01000001|00000000 01000001|01000001|
 |中|x|01001110 00101101|11100100 10111000 10101101|
 
-在计算机内存中,同一使用Unicode编码,当需要保存到硬盘或者需要传输的时候,就转换成utf-8编码,用记事本编辑的时候,从文件读取的utf-8字符被转换成Unicode字符到内存,保存的时候把Unicode字符转换成Utf-8保存到文件.在浏览器是以utf-8编码显示的,而保存到服务器是以Unicode编码的形式
+结论:<br>
+在计算机内存中，统一使用Unicode编码，当需要保存到硬盘或者需要传输的时候，就转换为UTF-8编码<br>
+用记事本编辑的时候，从文件读取的UTF-8字符被转换为Unicode字符到内存里，编辑完成后，保存的时候再把Unicode转换为UTF-8保存到文件
+
+<img src="./images/encode.png" width=50%>
 
 ### python字符串
 python的字符串类型是str,在内存中是Unicode表示,一个字符对应若干个字节,如果要在网络上传输,或者保存在磁盘中,就需要把str变为以字节为单位的bytes,python对bytes类型的数据用`b`前缀表示,例如
@@ -140,9 +148,9 @@ print('ABC'.encode('ascii'))
 print('中'.encode('ascii'))
 
 # b'ABC'
-print('ABC'.encode('utf-8'))
+print('ABC'.encode('UTF-8'))
 # b'\xe4\xb8\xad'
-print('中'.encode('utf-8'))
+print('中'.encode('UTF-8'))
 ```
 ```
 print(b'\xe4\xb8\xad'.decode('utf-8'))
@@ -160,7 +168,33 @@ print(len(b'\xe4\xb8\xad'))
 print(len('AB'))
 ```
 
-2. 占位符
+2. 字符串方法(不改变原字符串)
+    1. 查
+        1. `str.index(value)`
+        2. `str.count(value)`
+        3. `str.find(value, a, b)`从下标a-下标b(a,b可选参数)开始获取value的下标,未找到返回-1
+        4. `str.isdigit()`判断字符串中是否全部都是数字
+        5. `str.isalpha()`判断字符串中是否全部都是字母
+        6. `str.endswith(value)`判断字符串是否以value开头
+        7. `str.startswith(value)`判断字符串是否以value开头
+        8. `str.islower()`
+        9. `str.isupper()`
+    2. 改(返回新的字符串)
+        1. `str.upper()`将字母大写并返回字符串
+        2. `str.lower()`
+        3. `str.strip()`去除两边空格
+        4. `str.lstrip()`
+        5. `str.rstrip()`
+        6. `str.capitalize()`下标为0的字符大写
+        7. `str.title()`将单词首字母大写
+        8. `str.split(value, x)`以value为界切割x(可选)次后返回list列表,不填参数默认切割空格
+    3. 删
+        1. `str.replace(old, new, x)`在字符串中将x个old替换成new
+    4. 增
+        1. `拼接`
+
+3. 占位符
+
 |占位符|替换内容|
 |:-:|:-:|
 |%d|整数|
@@ -173,7 +207,7 @@ print(len('AB'))
 >>> tom is 1000 years old,he has 1.1 money
 ```
 
-3. `format()`
+4. `format()`
 ```
 '{0}的成绩提升了{1:.1f}分'.format('小明',21,45123)
 >>> 小明的成绩提升了21.0分
@@ -182,24 +216,36 @@ print(len('AB'))
 ## 使用list和tuple
 ### list
 1. `len()`
-2. `list(index)`
-    1. 超出序列IndexError
-    2. index从0开始,也可以从-1开始
-    3. 可读可写
-3. `list.append(ele)`
-    1. 末尾追加元素
-4. `list.insert(index, ele)`
-    1. 指定下标追加元素
-5. `list.pop(index)`
-    1. 不填参数表示最后一位
-    2. 指定下标删除元素
+2. 增
+    1. `l.append(value)`
+    2. `l.insert(index, value)`
+    3. `l.extend(value)`插入str,list或tuple;(拆开分别插入在最后面)
+3. 删
+    1. `l.pop(index)`通过索引删除(参数不填则默认为-1)
+    2. `l.remove(value)`通过值删除(相同元素只删除第一个)
+    3. `l.clear()`全部清除
+4. 改
+    1. `l[index] = value`
+5. 查
+    1. `l.index(value)`根据value获取下标(重复则取第一个)
+    2. `l.count(value)`根据value获取出现次数
+6. 其他方法
+    1. `l.copy()`浅拷贝
+    2. `l.reverse()`反转
+    3. `l.sort(reverse = False)`(参数默认为False)表示从小到大排序
+7. 切片
+    1. `list1[1:4:1]`
+    2. `list1[-2:-4:-1]`
 
 ### tuple
 1. 一旦初始化则不能修改,所以更加安全
-2. `tuple(index)`
-3. 只有一个元素的tuple必须加逗号来消除歧义
+2. `tuple[index]`
+3. 查
+    1. `t.index(value)`
+    2. `t.count(value)`
+4. 只有一个元素的tuple必须加逗号来消除歧义
     1. `t = (1, )`
-4. 内部如果某个元素是list,则这个list可以被修改
+5. 内部如果某个元素是list,则这个list可以被修改
 
 ### 不同类型之间转化
 `l = list(s)`
@@ -232,7 +278,7 @@ print(len('AB'))
     2. 并集
 
 ### 对象的可变性
-1. 字符串,数字是不可变对象.而list,dict等是可变对象,不可以作为key保存
+1. 字符串,数字,tuple是不可变对象.而list,dict等是可变对象,不可以作为key保存
 2. 修改不可变对象
     1. 使用切片
     2. 修改可变对象(list等)时,内存地址不变
