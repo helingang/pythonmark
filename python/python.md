@@ -139,6 +139,8 @@ ASCII码指的是字母和一些字符,例如A是65
 python的字符串类型是str,在内存中是Unicode表示,一个字符对应若干个字节,如果要在网络上传输,或者保存在磁盘中,就需要把str变为以字节为单位的bytes,python对bytes类型的数据用`b`前缀表示,例如
 ```
 x = b'ABC'
+bytes(b'abc') # 二进制字符串对象
+bytearray(b'a') # 二进制字符串数组对象
 ```
 解码与编码:
 ```
@@ -188,30 +190,47 @@ print(len('AB'))
         6. `str.capitalize()`下标为0的字符大写
         7. `str.title()`将单词首字母大写
         8. `str.split(value, x)`以value为界切割x(可选)次后返回list列表,不填参数默认切割空格
+        9. `str.join(list/tuple)`返回组合的字符串
+        10. 
     3. 删
         1. `str.replace(old, new, x)`在字符串中将x个old替换成new
     4. 增
         1. `拼接`
 
-3. 占位符
+3. 字符串拼接
+    1. 拼接
+        1. `'123 %s %s'%(123, 456)`      
+        2. `'%.1f'%1.23`一位小数
+        3. `'%-6.1f'%1.23`一位小数,后补齐6个字符
+        4. `'%6.1f'%1.23`一位小数,前补齐6个字符
+    2. `format()`
+        >`'{0}的成绩提升了{1:.1f}分'.format('小明',21,45123)`小明的成绩提升了21.0分
+        
+        > `'123{0}{1}'.format(456, 789)'`
 
-|占位符|替换内容|
-|:-:|:-:|
-|%d|整数|
-|%f|浮点型|
-|%s|字符串|
-|%x|十六进制整数|
+        > `'{0}{1}{a}'.format('000','111', a = '123')`
 
-```
-'%s is %d years old,he has %.1f money' %('tom', 1000, 1.1)
->>> tom is 1000 years old,he has 1.1 money
-```
+        > `'{a:^10.2f} {0} {b:.2%}'.format(1.2345, a = 2.345, b = 3.45)`^/</>(居中/左/右)对齐
 
-4. `format()`
-```
-'{0}的成绩提升了{1:.1f}分'.format('小明',21,45123)
->>> 小明的成绩提升了21.0分
-```
+        > `a = '123{}'.format print(a(456))`把`'123{}'.format`当做一个函数
+    3. `format_map(dict)`
+        >`'123{a}{b}'.format_map({ 'a': 1,'b': 2})`
+4. 字符串格式化
+    1. 占位符
+
+        |占位符|替换内容|
+        |:-:|:-:|
+        |%d|整数|
+        |%f|浮点型|
+        |%s|字符串|
+        |%r|与%s类似,但是打印时不会去掉字符串的引号|
+        |%x|十六进制整数|
+        |%c|ascii码|
+        |%o|八进制|
+        |%e|科学计数|
+
+        >`'%s is %d years old,he has %.1f money' %('tom', 1000, 1.1)` tom is 1000 years old,he has 1.1 money
+
 
 ## 使用list和tuple
 ### list
@@ -230,13 +249,20 @@ print(len('AB'))
     1. `l.index(value)`根据value获取下标(重复则取第一个)
     2. `l.count(value)`根据value获取出现次数
 6. 其他方法
-    1. `l.copy()`浅拷贝
+    1. `l.copy()`浅拷贝(会重新开辟一个内存地址存放这个list,修改内层的list,原list受到影响)
     2. `l.reverse()`反转
     3. `l.sort(reverse = False)`(参数默认为False)表示从小到大排序
 7. 切片
     1. `list1[1:4:1]`
     2. `list1[-2:-4:-1]`
-
+8. 列表的**深复制**
+    1. 即使修改内层的list,原list不受影响
+    2. 例子
+        ```
+        import copy
+        li = ['1', ['2'], 3]
+        deeplist = copy.deepcopy(li)
+        ```
 ### tuple
 1. 一旦初始化则不能修改,所以更加安全
 2. `tuple[index]`
