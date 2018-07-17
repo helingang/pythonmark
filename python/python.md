@@ -6,7 +6,7 @@
 5. IronPython: 与Jython类似,运行在.Net平台上的解释器,Python代码被编译成.Net字节码
 
 # 基础知识
-## 字符类型
+## 数据类型
 ### 数字
 1. 整数
     1. 不区分`long`和`int`
@@ -27,6 +27,10 @@ print(a - b)
 ### 字符串
 1. 使用'或",使用'''或"""可跨行
 2. 字符串前加r或者R,表示字符串不做特殊处理(不做转义)
+
+### 总结
+1. `int str bool float complex tuple bytes`不可变
+2. `list set dict bytearray`可变
 
 ## 基础语法
 ### 转义字符
