@@ -79,20 +79,21 @@ print(a - b)
 2. 返回布尔值
 3. `1 < '1' Fales`比较数据类型, `1 < 'a' 报错`类型不一致, `'1' > '2' False`比较ASCII码
 4. `4 > 3 > 1`链式比较
-
+### 赋值运算符
+1. `a = min(3, 5)`
+2. `+= -= *= /= %= **= //=`
+3. `x = y = z = 1`
+### 身份运算符
+1. `is, is not`
+2. `isinstance(obj, 对象类型)` 判断是否有构造关系
+### 成员运算符
+1. `in, not in`
 ### 逻辑运算符
 1. 与或非`and or not`
 2. 短路运算符
     1. and: 如果第一个表达式为False,后面就没必要计算了,则逻辑表达式一定为False
     2. or: 如果第一个表达式True,后面就没有必要计算了,表达式一定为True
-### 赋值运算符
-1. `a = min(3, 5)`
-2. `+= -= *= /= %=`
-3. `x = y = z = 1`
-### 成员运算符
-1. `in, not in`
-### 身份运算符
-1. `is, is not`
+3. not > and > or
 
 ### 原码,反码,补码,负数
 #### 原码(对人友好)
@@ -157,6 +158,12 @@ print('中'.encode('UTF-8'))
 ```
 print(b'\xe4\xb8\xad'.decode('utf-8'))
 print(b'ABC'.decode('utf-8'))
+```
+```
+# URL编码
+from urllib import parse
+s = '中国'
+print(parse.quote(s))
 ```
 
 ### 字符串的使用
@@ -279,29 +286,48 @@ print(len('AB'))
 
 ## 使用dict和set
 ### dict
-1. `d[key]`
-    1. 可读可写
-2. `d.get(key)`
-    1. 返回value或None
-3. `key in d`
-    1. 返回判断key是否存在,返回布尔值
-4. `d.pop(key)`
-    1. 移除key和value
-5. dict用空间换取查询效率
-6. dict的key不可变,这种通过key计算位置的算法称为哈希算法
+1. 3.6以后是有序的
+2. 增
+    1. `d.copy()`浅复制
+    2. `d.setdefault(key, value)` 设置keyvalue,不填写value则value默认为None,有则查无则增,返回value值
+    3. `dict.fromkeys(list1/dict1/set1, v)`提取key与value组成新的字典
+3. 删
+    1. `d.pop(key)`key必填
+    2. `d.popitem()`删除最后一个
+    3. `d.clear()`
+4. 改
+    1. `d.update(d1)`
+5. 查
+    1. `d[key]`
+    2. `d.get(key, msg)`
+    3. `d.keys()`
+    4. `d.values()`
+    5. `d.items()`
+6. dict用空间换取查询效率
+7. dict的key不可变,这种通过key计算位置的算法称为哈希算法
 
 ### set
 1. 是key(不可变对象)的集合,但不存储value
 2. 创建set时需要list作为输入集合
     1. `s = set([1, 2])`
-3. 内部是无序的
-4. 重复元素自动被过滤
-5. `s.add(key)`
-6. `s.remove(key)`
-7. `s1 & s2`
-    1. 交集
-8. `s1 | s2`
-    2. 并集
+3. 特性
+    1. 没有重复的元素
+    2. set是无序的不存在索引取值
+    3. 3.6版本以后是可变的
+4. 增
+    1. `s.add(key)`
+5. 删
+    1. `s.pop()`删除第一个
+    2. `s.clear()`
+    3. `s.remove(key)`
+6. 改
+    1. `s.update()`
+7. 查
+    1. `s1.isdisjoint(s2)` s1是否与s2没有交集,如果没有交集返回True
+    2. `s1.issubset(s2)` s1是否包含于s2
+    3. `s1.issuperset(s2)` s1是否包含s2
+8. set集合的运算
+    1. `& | -`
 
 ### 对象的可变性
 1. 字符串,数字,tuple是不可变对象.而list,dict等是可变对象,不可以作为key保存
