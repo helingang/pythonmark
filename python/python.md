@@ -340,6 +340,37 @@ print(len('AB'))
     2. 修改可变对象(list等)时,内存地址不变
     3. 强行修改不可变对象(字符串,元祖等)时,内存地址被修改
 
-## 函数
+# 条件控制和循环
+1. if三目运算
+
+```
+# 打印1或者2
+print(1) if a > 1 else 2
+```
+
+2. while
+
+循环while
+注: break不仅跳出while而且跳出else,continue跳出当前循环,else表示循环完成后执行的语句
+```
+while 条件:
+    code
+else:
+    code
+```
+
+3. for
+    1. `for i in obj`只循环**可迭代的对象**(序列类型, 散列类型)
+    2. `for i in range(x, y, z)`range(x, y, z)就可以看成可迭代对象, [x, y), z是步长默认为1
+```
+for i in range(0, 20):
+    if i % 5 == 0:
+        continue
+    print(i)
+else:
+    print('123')
+```
+
+# 函数
 1. 默认返回None
 2. 返回多个值时实际返回tuple
