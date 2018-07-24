@@ -507,4 +507,87 @@ b(a, 1)
         9. `f.close()` 关闭文件
             1. 如果不关闭的话占用内存
         10. `f.closed` 查看文件是否被关闭
-2. 
+2. 打开临时文件
+    1. 在内存中打开文件,返回文件对象
+        > `f = io.StringIO('123')`
+        
+        > `f = io.BytesIO(b'123')`
+    2. `f.getvalue`无视光标的位置获取所有值
+    3. 其他api与open相同
+3. `with as`
+    1. 不需要关闭文件,with语句执行完后会自动执行`f.close()`
+    2. 使用`\`可以打开多个文件
+
+
+
+# os模块
+- `os.getcwd()`显示当前路径
+- `os.listdir(path = path)`显示当前目录内容,path默认为当前路径
+- `os.chdir(path)`切换到目标路径(类似于cd)
+- `os.mkdir(path = path, mode = mode)`创建目录
+- `os.rmdir(path)`删除文件夹
+- `os.remove(path)`删除文件
+- `os.rename(path, name)`重命名
+- `os.path.join(path1, path2)`拼接路径
+- `os.path.dirname(path)`获取文件所在文件夹的绝对路径
+- `os.path.basename()`获取文件名
+- `os.path.abspath(fileName)`获取文件的绝对路径
+- `os.path.relpath(file, path)`返回'相对于path路径访问file'的相对路径
+- `os.path.getsize(path)`返回文件大小(字节)
+- `os.path.getctime(path)`返回创建时间
+- `os.path.getmtime(path)`返回修改时间
+- `os.path.exists(path)`判断文件或文件夹是否存在
+- `os.path.isdir(path)`判断是否是文件夹
+- `os.path.isfile(path)`判断是否是文件
+
+
+# 类
+```
+class Student:
+    # 初始化实例时执行的方法
+    # 双下划线方法会在特定的实际触发
+    def __init__(self, height):
+        # 定义每个实例的属性
+        self.height = height
+    
+    # 析构函数
+    # 所有代码执行完后自动执行,会销毁实例的地址
+    # del 可以删除一个变量的地址
+    def __del__(self):
+        print('销毁')
+    
+    # 定义公有属性1
+    name = 'Sam'
+    age = 15
+
+    # 定义私有属性1(可以用类名或者实例名调用)
+    _sex = 'male'
+
+    # 定义私有属性2
+    # 无法通过类型或者实例名调用
+    # 如何访问私有属性: `Student._Student__weight`,`Student()._Student__weight`
+    __weight = 100
+
+    # 定义方法
+    # self代表实例
+    def study(self):
+        print(self.__eat())
+
+    # 私有方法与属性的声明和调用相同
+    def __eat(self):
+        print(self.age)
+
+# 定义公有属性2
+Student.level = 1
+
+# 调用属性1 类名.属性名
+print(Student.level)
+
+# 调用属性2 实例名.属性名
+print(Student().age)
+
+# 定义属性3(只属于这个实例)
+s = Student()
+s.math = 20
+print(s.math)
+```
