@@ -619,3 +619,98 @@ print(s.math)
 1. 封装
 2. 继承
 3. 多态
+    1. 对同一间事情,会做出不同的反应
+```
+class Animal:
+    def run(self):
+        print('Run')
+class Dog(Animal):
+    def run(self:)
+        print('RunRun')
+class Rabbit(Animal):
+    def run(self:)
+        print('RunRunRun')
+```
+
+```
+class Father: 
+    def init(self, name, age): 
+        self.name = name 
+        self.age = age 
+        self.__money = 300
+    def eat(self):
+        print('Father eat')
+
+class Mother: 
+    def init(self, day): 
+        self.day = day
+    def cook(self):
+        print(self.age)
+    def eat(self):
+        print('Mother eat')
+
+# 优先调用自己的初始化方法,其次Father, Mother...
+
+class Son(Father, Mother):
+    def __init__(self, name, age, day):
+        # 重写属性
+        self.name = name
+        self.age = age
+        self.day = day
+    # 重写方法
+    def eat(self):
+        print('son eat')
+        # 调用父类的方法 父类类名.eat(self)
+        Father.eat(self)
+        Mother.eat(self)
+        # super().方法
+        # 这里Father的eat方法覆盖了Mother的eat方法
+        super().eat()
+```
+
+
+### 魔术方法
+1. 在特定的时机自己调用,比如`__init__`,`__del__`
+2. 双下划线开头和结尾
+3. `__add__`
+    1. 在遇到`+`号时执行的方法
+```
+class Calc:
+    def __init__(self, x, y):
+        self.x = x
+        self.y = y
+    # other指另一个实例
+    def __add__(self, other):
+        return self.x + other.y
+
+a = Calc(3, 5)
+b = Calc(4, 6)
+# 在遇到+加法时,将a这个实例传给self,b这个实例传给other
+print(a + b)
+```
+4. `__str__`和`__repr__`
+    1. 在`print`打印**实例**时触发
+    2. 直接执行时优先调用`__str__`,其次`__repr__`,再其次打印类的地址
+    3. 在交互模式下优先调用`__repr__`,其次打印类的地址
+    4. 必须使用`return`
+```
+class Dog:
+    def __str__(self):
+        return '__str__'
+    def __repr__(self):
+        return '__repr__'
+a = Dog()
+print(a)
+```
+
+5. `__call__`实例在调用时触发
+```
+class Dog:
+    def __call__(self, *args, **kwargs): 
+        print('call')
+a = Dog()
+a()
+```
+
+6. 其他魔术方法
+`__add__(self, other) __sub__(self, other)`等
