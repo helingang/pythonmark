@@ -671,7 +671,7 @@ class Son(Father, Mother):
 
 ### 魔术方法
 1. 在特定的时机自己调用,比如`__init__`,`__del__`
-2. 双下划线开头和结尾
+2. 双下划线开头和结尾,魔术方法让类的表现形式更丰富
 3. `__add__`
     1. 在遇到`+`号时执行的方法
 ```
@@ -712,9 +712,155 @@ a = Dog()
 a()
 ```
 
-6. `__new__`实例在创建时触发
+6. `__new__`
+    1. 在创建实例时触发
+    2. 实例是通过`__new__`方法里面创建的
+    3. 实例化时,先进入`__new__`,但是只有返回一个实例`object.__new__(cls)`时,才会进入`__init__`方法
+    4. `cls`代表类本身
+```
+class Food:
+    def __init__(self, name):
+        self.name = name
+        print('__init__')
+    def __new__(cls, *args, **kwargs):
+        print('__new__')
+        return object.__new__(cls)
+
+a = Food('eg')
+print(a)
+```
 
 
 
 7. 其他魔术方法
 `__add__(self, other) __sub__(self, other)`等
+
+
+### 单例模式
+1. 原理: 通过重写`__new__`方法,让`__new__`只能进行一次实例创建
+2. 优点: 节省内存
+3. 第二次创建时其实没有真正创建,而是去引用第一次创建的实例,只是同一个实例的不同名字
+```
+class Food:
+    __instance = None
+    def __init__(self, name):
+        self.name = name
+        print('__init__')
+    
+    def __new__(cls, *args, **kwargs):
+        print('__new__')
+        if cls.__instance == None:
+            # 创建一个实例,并赋值给私有属性,下次实例化时如果存在则不会再创建实例
+            cls.__instance = object.__new__(cls)
+        return cls.__instance
+a = Food('x')
+b = Food('y')
+print(a == b) # True
+```
+### 定制属性访问
+1. 获取属性
+    1. `getattr(类名/实例名, 'name')` -> `obj.name`
+    2. `__getattr__`
+        1. 魔术方法: 在没有获取到属性时触发
+    3. `a.__getattribute__('name')`
+2. 修改属性
+    1. `__setattr__`在设置属性时触发
+    2. `setattr(类名/实例名, 'name', value)`修改/增加
+3. 删除属性
+    1. `delattr(类名, 'name')` -> `del obj.name`
+    2. `__delattr__`
+4. 查询属性
+    1. `hasattr(类名/实例名, 'name')`
+
+### 描述符
+```
+class Base:
+    # self -> Base的实例
+    # instance -> A的实例
+    # owner -> A这个类
+    def __get__(self, instance, owner):
+        print('__get__')
+    def __set__(self, instance, value):
+        print('__set__')
+    def __delete__(self, instance):
+        print('__delete__')
+
+class A:
+    # 属性是一个实例
+    base = Base()
+
+a = A()
+a.base
+a.base = 1
+del a.base
+```
+
+### 装饰器
+1. 本质是函数
+2. 在不修改原函数的基础上增加功能
+```
+# 自定义装饰器函数dog
+# 使用dog函数装饰test函数
+# 装饰器函数会传入函数名
+def dog(fun):
+    def pig():
+        print('dog--------')
+        fun()
+        print('-----------')
+    return pig
+
+# 相当于执行dog函数并把test作为参数传入:
+# test = dog(test) -> test 相当于 pig
+# test就是dog函数执行(test作为参数)后的返回值, 把test看成pig
+@dog #这句话相当于 test = dog(test)
+def test():
+    print('test')
+
+test()
+```
+
+3. 内置装饰器
+    1. `@property`
+        1. 将方法可以作为属性访问
+    2. `@staticmethod`
+        1. 断绝方法与类的联系,相当于独立函数
+        2. 没有self参数
+    3. `@classmethod`
+        1. cls代表类本身
+
+```
+class Base:
+    @property
+    def study(self):
+        return self
+
+    @staticmethod
+    def eat():
+        print(Base.study)
+        return 'eat'
+
+    @classmethod
+    def sleep(cls):
+        print(cls)
+
+a = Base()
+print(a.study)
+```
+
+4. 类装饰器
+    1, 必须定义初始化方法和`__call__`方法
+
+```
+class Base:
+    def __init__(self, fun):
+        self.fun = fun
+
+    def __call__(self, *args, **kwargs):
+        self.fun()
+        print('call')
+
+@Base # test = Base(test)
+def test():
+    print('test')
+
+```
