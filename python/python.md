@@ -496,17 +496,20 @@ b(a, 1)
         2. `f.read(a)`
             1. 从游标处读取文件a(默认为最后)个内容(str),并移动游标,如果游标在最后则read内容为空
         3. `f.readline()` 读取一行
-        4. `f.readlines()` 读取多行
+        4. `f.readlines()` 读取所有数据
+            1. 返回的是列表,以行尾界限
         5. `f.write(data)` 写入内容并移动游标
-        6. `f.flush()`
+        6. `f.writelines(data)`写入多行
+            1. 需要自己加换行符
+        7. `f.flush()`
             1. 刷新缓冲: 通常在write后写,将内存中残留的数据写入到硬盘和文件中
             2. 在单独 写 的时候会有写缓冲,在单独 读 的时候会有读缓冲,写缓冲和读缓冲是分开的
-        7. `f.seek(0)`
+        8. `f.seek(0)`
             1. 设置游标到下标为0的位置: 下次read的时候从游标处开始阅读,下次write的时候则会以覆盖的形式写入(而不是插入的方式)
-        8. `f.tell()` 返回游标的位置
-        9. `f.close()` 关闭文件
+        9. `f.tell()` 返回游标的位置
+        10. `f.close()` 关闭文件
             1. 如果不关闭的话占用内存
-        10. `f.closed` 查看文件是否被关闭
+        11. `f.closed` 查看文件是否被关闭
 2. 打开临时文件
     1. 在内存中打开文件,返回文件对象
         > `f = io.StringIO('123')`
@@ -528,7 +531,7 @@ b(a, 1)
 - `os.rmdir(path)`删除文件夹
 - `os.remove(path)`删除文件
 - `os.rename(path, name)`重命名
-- `os.path.join(path1, path2)`拼接路径
+- `os.path.join(path1, path2)`以`/`拼接路径
 - `os.path.dirname(path)`获取文件所在文件夹的绝对路径
 - `os.path.basename()`获取文件名
 - `os.path.abspath(fileName)`获取文件的绝对路径
@@ -539,7 +542,7 @@ b(a, 1)
 - `os.path.exists(path)`判断文件或文件夹是否存在
 - `os.path.isdir(path)`判断是否是文件夹
 - `os.path.isfile(path)`判断是否是文件
-
+- `os.system('sl')`执行linux命令sl
 
 # 类
 ### 类的属性和方法的声明和调用
