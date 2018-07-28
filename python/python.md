@@ -399,6 +399,10 @@ test(1, *(2, 3), b = 10, **{'w': 10, 'c': 11})
     1. `dir()`
     2. `min max sum sorted reversed sum`
     3. enumerate 返回可以枚举的对象
+    ```
+    l = [10, 20, 30]
+    print(dict(enumerate(l)))
+    ```
     4. `eval` 运算字符串中的表达式
     5. `exec` 解析字符串
     6. `filter(函数名称, 参数列表)` 默认返回 返回值为True(或者1)时的参数组成的列表
