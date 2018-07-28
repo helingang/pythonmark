@@ -327,7 +327,7 @@ print(len('AB'))
     2. `s.clear()`
     3. `s.remove(key)`
 6. 改
-    1. `s.update()`
+    1. `s.update()`增
 7. 查
     1. `s1.isdisjoint(s2)` s1是否与s2没有交集,如果没有交集返回True
     2. `s1.issubset(s2)` s1是否包含于s2
