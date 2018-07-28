@@ -72,3 +72,71 @@ ridge:3d垄状
 inset:3d inset边框
 outset:3d outset边框
 ```
+
+- 颜色
+```
+border-color: red
+```
+
+- 位置
+```
+border-top: 1px solid red;
+```
+### 内外边距
+- 外边距
+- 内边距
+
+### 元素类型
+#### 块级元素
+1. 块级元素会占据一行的位置,它后面的元素内容会换行显示,块级元素里面可以放任何内容,主要用来布局,支持宽高和内外边距
+2. div h1-h6 ul li ol li p table form h1-h6 和 p 标签不能套块级元素
+#### 行内元素
+1. 行内元素只占据内容所占的位置,其他内容在他后面显示,但是行级元素里面不能放块级元素,不支持宽高,行内元素可以嵌套行元素,但不能嵌套行内元素
+2. a b span i em del
+
+### 元素类型转换
+```
+display: none;
+display: block;
+display: inline;
+display: inline-block;
+```
+
+### 外边距合并
+#### 垂直方向的合并
+1. 垂直相遇的两个盒子会出现外边距合并的情况(水平的不会合并),合并后取较大的值
+
+#### 嵌套盒子的合并
+1. 当两个盒子之间没有外边距或者边框分开时,给里面的盒子加上外边距,会自动把外边距合并到外面的盒子上
+2. **解决办法**:给外面的盒子加上内边距或者边框线,可以把border或者padding当成边框框住里面的盒子,使里面的盒子和外面盒子的外边距不相
+
+### 背景属性
+#### 背景颜色
+```
+background-color: red;
+background-color: #f99;
+background-color: rgba(0, 0, 0, .5);
+```
+
+#### 背景图片
+```
+background-image: url('xx');
+background-image: none;
+```
+
+#### 背景图片的重复方式
+```
+不重复
+background-repeat:no-repeat;
+
+水平方向重复
+background-repeat:repeat-x;
+
+竖直方向重复
+background-repeat:repeat-y;
+
+默认值
+background-repeat:repeat;
+```
+
+#### 背景图片的位置
