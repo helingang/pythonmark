@@ -203,7 +203,7 @@ print(len('AB'))
         6. `str.capitalize()`下标为0的字符大写
         7. `str.title()`将单词首字母大写
         8. `str.split(value, x)`以value为界切割x(可选)次后返回list列表,不填参数默认切割空格
-        9. `str.join(list/tuple)`返回组合的字符串
+        9. `str.join(list/tuple/str)`返回组合的字符串
         10. 
     3. 删
         1. `str.replace(old, new, x)`在字符串中将x个old替换成new
