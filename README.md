@@ -4,6 +4,7 @@
 # python
 1. [计算机相关知识](./python/pc.md)
 2. [python学习笔记](./python/python.md)
+3. [数据分析和入门](./python/data.md)
 
 # 算法
 ## 排序
