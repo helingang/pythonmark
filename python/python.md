@@ -875,3 +875,64 @@ def test():
 
 
 # 异常
+
+<img src='images/exception.png' width=80%>
+
+- 实际上异常就是类
+- help函数`help(abs)`
+- 例子
+```
+try:
+    print(1 + 2 + '3')
+
+# 只会执行一个except
+except Exception as e:
+    print(e)
+except (TypeError, ZeroDivisionError) as e:
+    print(1)
+
+else:
+    print('没有问题')
+
+# 始终执行
+finally:
+    print(1 + 2)
+```
+
+- 抛出异常
+```
+try:
+    a = 1
+    raise NameError
+except NameError as n:
+    print(n)
+
+```
+
+- 抛出自己的异常
+```
+class MyError(Exception):
+    pass
+try:
+    raise MyError
+except MyError:
+    print('e')
+```
+
+# 断言
+- 返回布尔值
+- 强制要求一个条件满足
+- 不符合条件时抛出异常
+- 可以用来检查代码,查看assert之前的代码是否有异常
+- 例子
+```
+a = 1
+assert a == 2, 'msg'
+print(a)
+```
+
+# 模块
+- 一个py文件就是一个模块
+- 导入模块时会执行一次这个模块
+- `if __name__ == '__main__'`
+    - `__name__`自己这个模块运行时打印`__main__`,在其他模块执行时打印它自己的模块名
