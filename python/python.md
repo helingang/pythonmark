@@ -204,7 +204,7 @@ print(len('AB'))
         7. `str.title()`将单词首字母大写
         8. `str.split(value, x)`以value为界切割x(可选)次后返回list列表,不填参数默认切割空格
         9. `str.join(list/tuple/str)`返回组合的字符串
-        10. 
+        10. [更多字符串方法](html/Python3.6字符串方法.html)
     3. 删
         1. `str.replace(old, new, x)`在字符串中将x个old替换成new
     4. 增
@@ -409,7 +409,9 @@ test(1, *(2, 3), b = 10, **{'w': 10, 'c': 11})
     7. `map(函数名称, 参数列表)` 返回 返回值组成的列表
     8. `zip(序列类型1, 序列类型2)` 将两个序列类型组合成字典
 
-6. 匿名函数
+6. [更多内置函数](html/python3内置函数大全.html)
+
+7. 匿名函数
     1.  `lambda 参数: 表达式`
     2. 一般用在做一些简单的操作
 ```
