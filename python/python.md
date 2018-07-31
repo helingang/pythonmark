@@ -938,3 +938,15 @@ print(a)
 - 导入模块时会执行一次这个模块
 - `if __name__ == '__main__'`
     - `__name__`自己这个模块运行时打印`__main__`,在其他模块执行时打印它自己的模块名
+- 在不同目录下使用`sys.path`导入,导入后会在当前路径生成`__pycache__`文件夹
+```
+import sys
+# 只能在sys.path路径下导入
+print(sys.path)
+sys.path.append('/home/pyvip/projects/f')
+```
+
+# 包和包的管理
+- 包由很多模块组成
+- `__init__.py`: 导入包后,包的`.`属性中就有这个文件中初始化的属性或者方法
+- 导入包名下的文件时需要先`from 根包`
