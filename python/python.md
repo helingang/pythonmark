@@ -1012,3 +1012,14 @@ def my_ge(num):
         yield i # 0, 1, 2, 3, 4
         i += 1
 ```
+
+# 正则
+- `re.findall(pattern, str)`
+    - 返回列表,包含匹配到的字符串
+    - 未找到时返回空列表
+- `re.match(pattern, str)`
+    - 返回对象,从下标为0开始匹配,没有匹配到时返回None
+    - group()表示匹配的值, span()表示匹配的下标
+- `re.search(pattern, str)`
+    - 返回对象,全局进行匹配,只匹配第一个,没有匹配到时返回None
+    - match()表示匹配的值, span()表示匹配的下标
