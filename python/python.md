@@ -204,6 +204,7 @@ print(len('AB'))
         7. `str.title()`将单词首字母大写
         8. `str.split(value, x)`以value为界切割x(可选)次后返回list列表,不填参数默认切割空格
         9. `str.join(list/tuple/str)`返回组合的字符串
+        10. <a href='./html/Python3.6字符串方法.html'>更多字符串方法</a>
         10. [更多字符串方法](html/Python3.6字符串方法.html)
     3. 删
         1. `str.replace(old, new, x)`在字符串中将x个old替换成new
@@ -938,15 +939,76 @@ print(a)
 - 导入模块时会执行一次这个模块
 - `if __name__ == '__main__'`
     - `__name__`自己这个模块运行时打印`__main__`,在其他模块执行时打印它自己的模块名
-- 在不同目录下使用`sys.path`导入,导入后会在当前路径生成`__pycache__`文件夹
+
+# 推导表达式
+## 列表推导式
 ```
-import sys
-# 只能在sys.path路径下导入
-print(sys.path)
-sys.path.append('/home/pyvip/projects/f')
+l = [a for a in range(10)]
+
+l2 = [a * 100 for a in range(10)]
+
+l3 = [a * 100 if a % 2 == 0 else a * 10 for a in range(10)]
+# [0, 10, 200, 30, 400, 50, 600, 70, 800, 90]
 ```
 
-# 包和包的管理
-- 包由很多模块组成
-- `__init__.py`: 导入包后,包的`.`属性中就有这个文件中初始化的属性或者方法
-- 导入包名下的文件时需要先`from 根包`
+## 集合推导式
+```
+{a * 100 if a % 2 == 0 else a * 10 for a in range(10)}
+```
+
+## 字典推导式
+```
+d = {k: v for k, v in enumerate('abc')}
+# {0: 'a', 1: 'b', 2: 'c'}
+```
+
+# 迭代器和生成器
+## 迭代器
+- 可迭代对象: 实现了`__iter__`方法
+- 迭代器: 实现了`__iter__`和`__next__`方法
+- `迭代器 = iter(可迭代对象)`或者`迭代器 = 可迭代对象.__iter__()`: 获得迭代器
+- 迭代器的计算是惰性的,需要返回数据时才计算
+- `next(迭代器)`或者`迭代器.__next__()`: 查看**迭代器**的值,每次只取下一个值直到报错
+```
+# iter函数返回迭代器对象
+a = iter('asb')
+b = enumerate('asb')
+
+print(next(a), a.__next__(), next(a))
+# a s b
+
+print(next(b), next(b), next(b))
+# (0, 'a') (1, 's') (2, 'b')
+```
+- for循环的原理
+    1. 循环可迭代对象,先将可迭代对象转换成迭代器`l = iter(l)`
+    2. 使用while循环,每次try next()
+```
+iterable = [1, 2]
+my_it = iter(iterable)
+while True:
+    try:
+        next(my_it)
+    except StopIteration as e:
+        break
+```
+
+## 生成器
+1. 使用推导式制造生成器
+```
+ge = (i for i in range(10))
+next(ge)
+```
+
+2. yield制造生成器
+    - 一个函数只要用了yield,那么这个函数就可以成为生成器
+    - yield暂停函数,返回i,等待下一次next激活
+    - generator保存的是算法,每次调用next(),就计算出值
+    - 函数是顺序执行,遇到return语句或者最后一行函数语句就返回.而变成generator的函数,在每次调用next()的时候执行,遇到yield语句返回,再次执行时从上次返回的yield语句处继续执行,当没有yield执行的时候就会报错
+```
+def my_ge(num):
+    i = 0
+    while i < num:
+        yield i # 0, 1, 2, 3, 4
+        i += 1
+```
