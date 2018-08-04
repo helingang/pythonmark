@@ -783,6 +783,7 @@ print(a == b) # True
     1. `hasattr(类名/实例名, 'name')`
 
 ### 描述符
+- 某各类,只要是内部定义了方法`__get__`,`__set__`,`__delete__`中的一个或多个,就可以称之为描述符
 ```
 class Base:
     # self -> Base的实例
@@ -879,7 +880,7 @@ def test():
 
 # 异常
 
-<img src='images/exception.png' width=80%>
+<img src='images/exception.png' width=50%>
 
 - 实际上异常就是类
 - help函数`help(abs)`
