@@ -85,7 +85,7 @@ create table student(
     s_id int primary key auto_increment,
     s_name char(10) not null,
     d_id int not null,
-    constraint ds_id foreign key(d_id) references dep(id)
+    constraint ds_id foreign key(d_id) references school(id)
 )
 
 # 学生详细信息
