@@ -53,7 +53,7 @@
     - 添加唯一约束 `create table tbName(id int, unique key(id))`
     - 添加唯一约束 `alter table tbName add unique key(id)`
     - 添加唯一约束 `alter table tbName modify id int unique key`
-    - 删除唯一约束 `alter table tbName drop unique key id`
+    - 删除唯一约束 `alter table tbName drop key id`
 3. 主键约束`primary key`
     - 唯一标识一条数据,每个表一个主键,非空且唯一
     - 当没有主键时,第一个非空且唯一的被视为主键
@@ -111,3 +111,45 @@ create table choose(
 )
 ```
 
+## 查询
+### 单表查询
+- 模糊查询
+```
+%: 代表任意个数的字符
+_: 代表一个字符
+select id 学号,name 姓名 from student where name like '张%'
+```
+- 排序
+```
+# 前三条
+select * from student order by id asc limit 3
+
+# 第三条的后两条数据
+select * from student order by id desc limit 3,2
+```
+- 聚合函数
+    - `MAX MIN SUM AVG ROUND COUNT`
+
+- 分组查询
+    - 与聚合函数一起使用
+```
+select class,count(*) from student
+group by class 
+having class = 5
+```
+
+### 子查询
+```
+select * from student where age > (select avg(age) from student)
+```
+
+### 关联查询
+- 内连接: 只会把关联的字段查询和显示出来
+```
+select * from student inner join student_detail on s_id = sd_id
+```
+
+- 外连接
+    - 为空的也会查询出来,空用null表示
+    - 左外`left join`: 左边为基准,右边少的用null填充
+    - 右外`right join`: 右边为基准,左边少的用null填充
