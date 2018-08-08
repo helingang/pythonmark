@@ -1,3 +1,4 @@
+# MySQL
 ## MySQL基础命令
 1. 进入 `mysql -uroot -pqwe123 -hlocalhost -P3306`
 2. 创建用户 `create user 'test28'@'%' identified by 'qwe123`
