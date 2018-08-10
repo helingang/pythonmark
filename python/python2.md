@@ -154,3 +154,95 @@ select * from student inner join student_detail on s_id = sd_id
     - 为空的也会查询出来,空用null表示
     - 左外`left join`: 左边为基准,右边少的用null填充
     - 右外`right join`: 右边为基准,左边少的用null填充
+
+
+# Redis
+- 特点
+    - Redis是一个基于内存的高性能key-value数据库
+
+- 数据类型
+    - string
+    - list
+    - set
+    - zset
+    - hash
+
+## 操作
+- string
+    - 设置一个string`set key value`
+        - `set name Sam`
+        - 设置存活时间`set key value ex xx`
+    - 设置多个string`mset key1 value1 key2 value2`
+    - 自增自减
+
+        ```
+        set count 0
+        incr count # 自增1
+        incrby count 30 # 自动30
+        decr count # 自减1
+        decrby count 30 # 自减30
+        ```
+    - `get key`
+        - `get name`
+    - 查看所有键 `keys *`
+- list
+    - 左边添加 `lpush key value`
+        - `lpush l1 1 2 3 4 5`
+    - 右边添加 `rpush key value`
+    - 查看 `lrange key start end`
+    - 左边删除 `lpop key`
+    - 右边删除 `rpop key`
+    - 指定删除
+        - 从后往前(负号)删除一个4 `lrem -1 4`
+        - 删除所有4 `lrem 0 4`
+
+- hash(键值对集合)
+    - 设置一个哈希类型 `hset key value`
+        - `hset user name Sam`
+    - 查看 `hget key`
+        - `hget user name`
+    - 设置多个哈希类型 `hmset key key1 value1 key2 value2`
+    - 获取多个哈希类型 `hmget key key1 key2`
+    - 获取所有key `hkeys key`
+        - `hkeys user`
+    - 获取所有value `hvals key`
+        - `hvals user`
+        - 查看key里面有几组键值对 `hlen key`
+
+- set
+    - 添加set `sadd s1 1 2 3`
+    - 查看成员 `smembers s1`
+    - 在set中指定删除5 `srem s1 5`
+    - 随机删除 `spop s1`
+    - 移动集合中的元素
+        - 将1从s1移动到s2 `smove s1 s2 1`
+    - 集合运算
+        - 交集 `sinter s1 s2`
+        - 查交集并保存到s3 `sinterstore s3 s1 s2`
+        - 并集 `sunion s1 s2`
+        - 差集 `sdiff s1 s2`
+    - 获取集合个数 `scard s1`
+    - 随机返回一个 `srandmember s1`
+
+- zset(有序的集合)
+    - 添加zset `zadd z1 3 a 4 b 1 c`
+        - 3 4 1 表示score分数
+        - `{c, a, b}`
+    - 查看zset(从小到大): `zrange z1 0 -1`
+    - 倒序查看(从大到小)并查询出分数: `zrevrange z1 0 -1 withscores`
+    - 删除a `zrem z1 a`
+    - 查看个数 `zcard z1`
+    - 查看score范围(1至10)内的个数 `zcount z1 1 10`
+    - 查看c的分数是多少 `zscore z1 c`
+
+- 通用操作
+    - 查看键的类型 `type key`
+    - `append key value`
+        - 无则增
+        - value追加到旧value上
+    - 查看存活时间 `ttl key`
+        - -1表示永久存活
+        - 默认永久存活
+    - 设置存活时间
+        - `expire key xx`
+    - 删除key对应的值 `del key`

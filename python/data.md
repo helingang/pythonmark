@@ -3,12 +3,12 @@
     - anaconda命令
 ```
 conda upgrade -all
+# 查看所有库
 conda list
 conda install package(=version)
 conda remove package
 conda search
 ```
-- 环境变量`D:\Anaconda3\Scripts`
 
 - [python库下载](https://www.lfd.uci.edu/~gohlke/pythonlibs/)
 
