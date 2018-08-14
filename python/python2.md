@@ -246,3 +246,74 @@ select * from student inner join student_detail on s_id = sd_id
     - 设置存活时间
         - `expire key xx`
     - 删除key对应的值 `del key`
+
+
+
+# python操作数据库
+## python操作MySQL
+- 配置文件地址 `/etc/mysql/mysql.conf.d/mysqld.cnf`
+    - 绑定ip`0.0.0.0`
+- 端口转发
+    - 解释器和MySQL不在同一台机器时需要转发端口
+
+- 操作数据库
+```
+# 创建连接
+conn = pymysql.connect(
+    host = '127.0.0.1',
+    port = 3306,
+    user = 'root',
+    password = 'qwe123',
+    database = 'test',
+    charset = 'utf8'
+)
+
+# 创建游标
+cursor = conn.cursor()
+
+# 执行sql语句
+row = cursor.execute('show tables') # row表示受影响的数量
+
+# fetchall是生成器
+all = cursor.fetchall() # all表示sql执行的结果
+for v in all:
+    print(*v) # *v表示拆包,拆除外面的括号
+one = cursor.fetchone()
+many = cursor.fetchmany(5) # 取5条
+
+row = cursor.execute('select * from student')
+all = cursor.fetchall()
+print(*all)
+
+sql = 'create table test(id int PRIMARY KEY,name VARCHAR(100))'
+cursor.execute(sql)
+
+cursor.execute('insert into test value(1, "Sam")')
+
+# 对数据做修改后需要提交事务commit
+cursor.execute('insert into test value(1, "Sam")')
+one = cursor.fetchall()
+conn.commit() # 回滚 conn.rollback()
+
+
+cursor.executemany("update test set name = 'haha' where id = %s", (1, 2))
+cursor.executemany("insert test value(%s, %s)", [(3, 'QWE'), (4, 'ASD')])
+conn.commit()
+
+# 关闭游标和连接
+cursor.close()
+conn.close()
+
+```
+
+
+## python操作Redis
+- 操作数据库
+```
+re = redis.Redis(
+    host = '127.0.0.1',
+    port = '6379'
+)
+re.set('testtest', '111')
+print(re.get('testtest').decode('utf8'))
+```
