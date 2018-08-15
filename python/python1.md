@@ -549,7 +549,9 @@ b(a, 1)
 - `os.path.exists(path)`判断文件或文件夹是否存在
 - `os.path.isdir(path)`判断是否是文件夹
 - `os.path.isfile(path)`判断是否是文件
+- `os.path.isabs(path)`判断是否是绝对路径
 - `os.system('sl')`执行linux命令sl
+- `os.path.normpath`获取规范化路径
 
 # 类
 ### 类的属性和方法的声明和调用

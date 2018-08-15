@@ -317,3 +317,55 @@ re = redis.Redis(
 re.set('testtest', '111')
 print(re.get('testtest').decode('utf8'))
 ```
+
+
+# Python常用工具库
+- json模块(数据交互)
+    - 直接转化
+        - `json.dumps(obj)`Python对象转化成Json对象(str类)
+            ```
+            d = {
+                'name': 'Sam',
+                'age': 10,
+                'list': [1, 2, 3],
+                'tuple': (4, 5, 6),
+                'bool': True,
+                'None': None
+            }
+            json_data = json.dumps(d)
+            print(json_data)
+            # {"name": "Sam", "list": [1, 2, 3], "bool": true, "None": null, "age": 10, "tuple": [4, 5, 6]}
+            ```
+        - `json.loads(obj)`将Json对象转化成Python对象(dict类)
+    - 以文件形式操作
+        - `json.dump(obj)`
+            ```
+            with open('test.json', 'w+') as f:
+                # Python对象转化成Json对象(str类),并写入文件
+                json.dump(d, f)
+            ```
+        - `json.load(obj)`
+            ```
+            with open('test.json', 'r') as f:
+                # 将Json文件对象转化成Python对象
+                python_dict = json.load(f)
+                print(python_dict)
+            ```
+
+
+- hashlib模块(查找和加密)
+    - `hash(obj)`算法函数
+        - 把任意长度的数据转换为一个长度固定的数据串
+        - 用途
+            - 数据查找: 通过建立索引(键)方便效率查询
+            - 加密
+        - 特点
+            - 正向快速: 给定明文和hash算法,在有限时间和有限资源内能计算出hash值
+            - 逆向困难: 给定若干hash值, 在有限时间内很难逆推出明文
+            - 输入敏感: 原始输入信息修改一点信息,产生的hash值看起来都有很大改变
+            - 冲突避免: 很难找到两段内容不同的明文并且还使他们的hash值一致
+    - 使用
+        ```
+        md5 = hashlib.md5(b'abc')
+        print(md5.hexdigest()) # 获取hash值
+        ```
