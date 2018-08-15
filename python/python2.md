@@ -322,7 +322,7 @@ print(re.get('testtest').decode('utf8'))
 # Python常用工具库
 - json模块(数据交互)
     - 直接转化
-        - `json.dumps(obj)`Python对象转化成Json对象(str类)
+        - `json.dumps(obj, ensure_ascii=True)`Python对象转化成Json对象(str类)
             ```
             d = {
                 'name': 'Sam',
@@ -355,7 +355,7 @@ print(re.get('testtest').decode('utf8'))
 
 - hashlib模块(查找和加密)
     - `hash(obj)`算法函数
-        - 把任意长度的数据转换为一个长度固定的数据串
+        - 把任意长度的数据(不可变类型)转换为一个长度固定的数据串
         - 用途
             - 数据查找: 通过建立索引(键)方便效率查询
             - 加密
@@ -369,3 +369,151 @@ print(re.get('testtest').decode('utf8'))
         md5 = hashlib.md5(b'abc')
         print(md5.hexdigest()) # 获取hash值
         ```
+
+- datetime模块(时间)
+    - 模块中主要为类
+    - date类
+        - 日期对象(年月日),常用属性`year,month,day`是必备参数
+            ```
+            d = datetime.date(2018, 8, 15)
+            print(d)
+            ```
+    - time类
+        - 时间对象(时分秒),常用属性`hour,minute,second,microsecond`
+            ```
+            d = datetime.time(20, 53, 20)
+            print(d)
+            ```
+    - datetime类
+        - 日期时间对象(年月日时分秒),常用属性`year,month,day,hour,minute,second,microsecond`
+            ```
+            d = datetime.datetime(2018, 8, 15, 20, 53, 20)
+            print(d)
+            ```
+        - datetime属性
+            - `now(), utcnow()`
+                ```
+                h = datetime.datetime.now().hour
+                m = datetime.datetime.now().minute
+                utc_time = datetime.datetime.utcnow()
+                beijing_time = datetime.timedelta(hours=8) + datetime.datetime.utcnow()
+                ```
+            - `strptime(timestring, format)`
+                ```
+                d = datetime.datetime.strptime('2018-8-15 21:18:21', '%Y-%m-%d %H:%M:%S') # 把字符串时间转换成时间对象datetime类
+                print(d)
+                ```
+            - `时间对象.strftime(format)`
+                ```
+                s = datetime.datetime.now().strftime('%m--%d--%Y') # 格式化成指定样式
+                print(s)
+                ```
+            - 时间戳转时间对象
+                ```
+                ts = time.time() # 时间戳(从1970年到现在的秒数)
+                dt = datetime.datetime.fromtimestamp(ts) # 将时间戳转换成时间对象
+                print(dt)
+                ```
+            - 时间对象转时间戳
+                ```
+                ts = datetime.datetime.timestamp(dt)
+                print(ts)
+                ```
+
+    - timedelta类
+        - 时间间隔(两个时间点的间隔),周, 天等
+            ```
+            d = datetime.timedelta(hours=5, weeks=1, days=2, minutes=30, seconds=20)
+            print(d)
+            ```
+
+
+- logging模块(日志)
+    1. 初始化
+        ```
+        logger = logging.getLogger('name') # name通常为模块的名称
+        ```
+    2. 设置级别(DEBUG < INFO < WARNING < ERROR < CRITICAL)(打印设置及以上的级别)
+        ```
+        # DEBUG: 详细信息,在调试问题时使用
+        # INFO: 证明事情按预期工作
+        # WARNING: 表明发生一些意外,或不久的将来会发生问题,软件在正常工作
+        # ERROR: 软件不能执行某些功能
+        # CRITICAL: 软件不能继续运行
+        logger.setLevel(logging.DEBUG)
+        ```
+    3. 定义Handle
+        - 控制台输出
+            ```
+            # StreamHandle 将日志在控制台输出
+            sh = logging.StreamHandler() # 在控制台打印
+            sh.setLevel(logging.WARNING) # 哪些级别及以上的日志需要在控制台输出
+            ```
+        - 文件输出
+            ```
+            fh = logging.FileHandler('log.txt') # 在日志中打印
+            fh.setLevel(logging.DEBUG) # 哪些级别及以上的日志需要记录在日志中
+            ```
+    4. `formatter`定义和设置日志格式
+        ```
+        formater = logging.Formatter('时间: %(asctime)s; 级别: %(levelname)s; 日志内容: %(message)s')
+        sh.setFormatter(formater)
+        fh.setFormatter(formater)
+        ```
+        <img src='./images/loggerformat.png' width=80%>
+
+    5. 将Handler添加到logger实例中
+        ```
+        logger.addHandler(sh)
+        logger.addHandler(fh)
+        ```
+    6. 实例
+        ```
+        import logging
+
+        logger = logging.getLogger('test')
+
+        logger.setLevel(logging.DEBUG)
+
+        sh = logging.StreamHandler() # 在控制台打印
+        sh.setLevel(logging.WARNING) # 哪些级别及以上的日志需要在控制台输出
+
+        fh = logging.FileHandler('log.txt') # 在日志中打印
+        fh.setLevel(logging.DEBUG) # 哪些级别及以上的日志需要记录在日志中
+
+        formater = logging.Formatter('时间: %(asctime)s; 级别: %(levelname)s; 日志内容: %(message)s')
+        sh.setFormatter(formater)
+        fh.setFormatter(formater)
+
+        logger.addHandler(sh)
+        logger.addHandler(fh)
+
+        if __name__ == '__main__':
+                # logger.debug('debug')
+                # logger.info('info')
+                # logger.warning('warning')
+                # logger.error('error')
+                # logger.critical('critical')
+
+                def f(a):
+                    try:
+                        num = 10 / a
+                        logger.info(num)
+                    except Exception as e:
+                        logger.error(e)
+                f(0)
+        ```
+
+- base64模块(编码)
+    - 用于传输数据
+    - `base64.b64encode()`
+    - `base64.b64encode()`
+    - 例子
+        ```
+        a = 'abc'
+        b = base64.b64encode(a.encode('utf-8'))
+        c = base64.b64decode(b).decode('utf-8')
+        print(c)
+        ```
+    - `base64.urlsafe_b64encode()`
+    - `base64.urlsafe_b64decode()`
