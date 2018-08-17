@@ -247,12 +247,43 @@ select * from student inner join student_detail on s_id = sd_id
         - `expire key xx`
     - 删除key对应的值 `del key`
 
+# Mongodb
+- 以json对象的形式存在于内存和硬盘(中间型)
+- 数据库 -> 集合 -> 文档
+- 运用场景
+    - 查询速度介于MySQL和Redis
+    - 常用于频繁数据交互(例如查询)的场景
+    - 需要实时更新的场景
+
+- 进入和查看
+    - `mongo`进入
+    - `show dbs`显示所有库
+    - `show collections`查看集合
+    - `db.version()`显示版本
+    - `db`查看当前所在的库
+- 增删改查
+    - `use dbName`切换(没有则新建)数据库
+
+    - `db.dropDatabase`删除当前use的数据库
+
+    - `db.createCollection('student')`创建集合
+    - `db.student.insert({_id: 123, name: 'Sam', age: 16})`插入一条数据
+    - `db.student.find()`查询所有(查询出的数据是双引号)数据
+    - `db.student.findOne()`查询第一条数据
+    - `db.student.find({_id: 123, {name: 1}})`条件查询id为123,并且只显示name值
+    - `db.student.find({age: {$lt: 100}})`条件查询age<100
+    - `db.student.update({sex: 1}, {$set:{age: 20}})`只更新sex为1的第一条数据,将年龄更新为20
+    - `db.student.update({name:'sam'},{$set:{age:20}},{multi:true})`修改name为sam的所有数据,将年龄改为20
+    - `db.student.update({name:'jack'},{x:'y'})`将name为jack的文档全部更新成x:y
+    - `db.student.remove({name:'sam'},{justOne:true})`按条件删除匹配的第一条数据
+
+
 
 
 # python操作数据库
 ## python操作MySQL
 - 配置文件地址 `/etc/mysql/mysql.conf.d/mysqld.cnf`
-    - 绑定ip`0.0.0.0`
+    - 绑定bind_ip`0.0.0.0`
 - 端口转发
     - 解释器和MySQL不在同一台机器时需要转发端口
 
@@ -316,6 +347,26 @@ re = redis.Redis(
 )
 re.set('testtest', '111')
 print(re.get('testtest').decode('utf8'))
+```
+
+## python操作mongodb
+- 配置文件地址`/etc/mongodb.conf`
+    - 修改bind_ip为`0.0.0.0`
+- 操作
+```
+# 创建连接
+client = pymongo.MongoClient('127.0.0.1', 27017)
+
+# 获取数据库
+db = client['test']
+
+# 获取集合
+collection = db['student']
+
+data = collection.find()
+data = collection.insert_one({'name': 'Ann', 'age': 21})
+data = collection.insert_many([{'name': 'Back'}, {'name': 'Git'}])
+print(data)
 ```
 
 
@@ -427,6 +478,20 @@ print(re.get('testtest').decode('utf8'))
             print(d)
             ```
 
+- time模块
+    - `time.time()`
+        - 返回时间戳
+    - `time.localtime([时间戳])`当天时间
+        - 返回时间元祖`time.struct_time(tm_year=2018, tm_mon=8, tm_mday=16, tm_hour=20, tm_min=30, tm_sec=38, tm_wday=3, tm_yday=228, tm_isdst=0)`
+    - `time.gmtime([时间戳])`格林尼治时间
+        - 返回时间元祖
+    - `time.asctime([时间元祖])`
+        - 返回时间字符串`Thu Aug 16 20:30:38 2018`
+    - `time.strftime('%Y-%m', [时间元祖])`
+        - 返回指定格式的时间字符串
+    - `time.strptime('2018-8-15 21:18:21', '%Y-%m-%d %H:%M:%S')`
+        - 返回时间元祖
+
 
 - logging模块(日志)
     1. 初始化
@@ -517,3 +582,4 @@ print(re.get('testtest').decode('utf8'))
         ```
     - `base64.urlsafe_b64encode()`
     - `base64.urlsafe_b64decode()`
+
