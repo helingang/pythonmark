@@ -17,26 +17,34 @@ conda search
     - cmd中`jupyter-notebook`
 
 # numpy
+- 主要用于矩阵操作和运算
 - 使用普通一维数组生成numpy一维数组
     ```
     l = [10, 11, 21]
-    arr = np.array(data)
+    arr = np.array(data, dtype=np.float64)
     print(type(arr)) # <class 'numpy.ndarray'>
+    arr2 = arr.astype(np.int32)
     ```
 - 循环生成数组
     - `arr = np.arange(1, 20, 2)`1-20,步长为2
+- 生成多维数组
+    - `arr = np.ndarray((2, 3))`两行三列
+    - `arr = np.ndarray([[1, 2], [2, 3]])`
 - 生成连续的数组
     - `a = np.linspace(0, 5.0, num=50)`生成50个(默认)0-5.0的数字组成数组
 - 查看数组形状`arr.shape`
 - 快速生成数组
     - `np.zeros(10)` 生成包含10个0的数组
+    - `np.zeros((2, 3))` 生成两行三列数组
+    - `np.full((2, 3), 8)` 生成两行三列数组,并且元素都为8
     - `np.zeros((3, 6))` 生成3*6的二维数组
         ```
         arr = np.zeros((2, 3))
         arr[0] = [1, 2, 3]
         ```
-    - `np.empty(5)` 数组元素未初始化
-        
+    - `np.empty(5)` 数组元素未初始化(可能有任何数字)
+    - `np.eye(3)`生成3x3的对角线矩阵
+
 
 - numpy数组也支持切片
     - 注意二维数组的列数需相等否则会出现`IndexError`异常
@@ -113,7 +121,7 @@ conda search
         x1 = [10, 8, 7, 3]
         y1 = [3, 6, 7, 8]
     
-        plt.figure(0) # 绘制第一张画布
+        plt.figure(figsize=(10, 10), dpi=100) # 绘制第一张画布
         plt.plot(x, y, 'o-', label ='line_1') # 绘制o-图(^- .-)
         
         plt.figure(1) # 绘制第二张画布
