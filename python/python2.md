@@ -583,3 +583,126 @@ print(data)
     - `base64.urlsafe_b64encode()`
     - `base64.urlsafe_b64decode()`
 
+# 网络传输
+## OSI与TCP/IP模型
+<table>
+    <thead>
+        <tr>
+            <td>OSI</td>
+            <td>TCP/IP</td>
+            <td>功能</td>
+            <td>协议</td>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>应用层</td>
+            <td rowspan='3'>应用层</td>
+            <td>操作系统或应用进行网络交换的标准接口</td>
+            <td rowspan='3'>HTTP(基于TCP), HTTPS, FTP, TELNET, SSH, SMTP, POP3, DNS</td>
+        </tr>
+        <tr>
+            <td>表示层</td>
+            <td>将不同的编码方式换成网络通信中采用的标准表现形式</td>
+        </tr>
+        <tr>
+            <td>会话层</td>
+            <td>不同的PC的不同进程之间建立或解除连接</td>
+        </tr>
+        <tr>
+            <td>传输层</td>
+            <td>传输层</td>
+            <td>两个主机之间的端对端的数据连接与传输</td>
+            <td>TCP(可靠), UDP(不可靠)</td>
+        </tr>
+        <tr>
+            <td>网络层</td>
+            <td>网络层</td>
+            <td>选择路由并正确的找着目标主机</td>
+            <td>IP, ARP, RARP, ICMP</td>
+        </tr>
+        <tr>
+            <td>数据链路层</td>
+            <td rowspan='2'>数据链路层</td>
+            <td>两个相邻节点之间准确的数据传输</td>
+            <td rowspan='2'>网络通信硬件及接口</td>
+        </tr>
+        <tr>
+            <td>物理层</td>
+            <td>原始比特数据流在物理介质上传输</td>
+        </tr>
+    </tbody>
+</table>
+
+## TCP连接
+### 建立连接(三次握手)
+<img src='./images/tcp1.png' width=90%>
+
+1. 最初的两端的TCP都处于CLOSED(关闭)状态
+2. 客户端主动连接,服务端进入LISTEN(监听)状态,等待客户端连接
+3. 客户端发送`SYN=1`,初始序号`seq=x`,客户端进入已发送状态
+4. 服务端接收报文,如同意建立连接则向A发送确认,确认报文中`SYN=1, ACK=1`,确认号`ack=x+1`,初始序号`seq=y`,服务端进入同步接收状态
+5. 客户端接收到服务端的确认后,向服务端发出确认,确认报文的`ACK=1`,确认号`ack=y+1`,序号为`seq=x+1`,客户端进入已连接状态
+6. B收到确认后也进入已连接状态
+7. 客户端收到确认后向服务端再次发送确认的原因: A向B发出连接请求报文段，如果此报文段在网络中长时间滞留，A误以为报文段丢失，会再次向B发送连接请求报文段（假设第二次请求连接建立成功）。当数据传输完成并释放连接后，B又收到A第一次发送的连接请求，B误以为A发起了一次新的连接请求。所以，A有必要让B知道是否发起了新的连接请求
+
+## 数据传输
+<img src='./images/tcp2.png' width=90%>
+
+## 断开连接(四次挥手)
+<img src='./images/tcp3.png' width=90%>
+
+
+## 套接字
+- 套接字是python与操作系统之间的接口,通过设置对等的ip和端口,实现数据的发送与接收
+
+- 服务端
+    ```
+    import socket
+
+    server = socket.socket() # server: 套接字的实例
+
+    server.bind(('', 8888)) # server绑定ip和端口,ip为空是为了让所有人都可以访问(默认为0.0.0.0)
+
+    server.listen(5) # 监听允许连接的数量
+    # 这里server是服务器监听套接字
+    # <socket.socket fd=428, family=AddressFamily.AF_INET, type=SocketKind.SOCK_STREAM, proto=0, laddr=('0.0.0.0', 8888)>
+    # family = AddressFamily.AF_INET 地址家族是IPV4
+    # type = SocketKind.SOCK_STREAM 默认类型是tcp类型
+    # laddr 本地地址
+
+    print(server.accept())
+    # accept阻塞: 会一直等待客户端的连接,返回一个元组对象(元祖的第一项是对等连接套接字, 其他项是客户端对象)
+    # (<socket.socket fd=492, family=AddressFamily.AF_INET, type=SocketKind.SOCK_STREAM, proto=0, laddr=('127.0.0.1', 8888), raddr=('127.0.0.1', 3575)>, ('127.0.0.1', 3575))
+    # (A, B1, B2)
+    # 当有连接的时候生成服务端套接字A(对等连接套接字)
+    # 而B称为服务的对象
+
+    conn, raddr = server.accept()
+
+    data = conn.recv(1024)
+    # 参数表示对等连接套接字最大可接收的字节数
+    # recv阻塞: 可以在客户端,也可以在服务端阻塞
+    # 当接收字节数大于发送字节数时阻塞
+    # 如果接收的字节数小于发送的字节数,则可以多次接收,如果客户端关闭连接则接收空字符串
+    ```
+
+- 客户端
+    ```
+    import socket
+
+    client = socket.socket()
+
+    client.connect(('127.0.0.1', 8888))
+    # 这里client是客户端套接字
+    # <socket.socket fd=756, family=AddressFamily.AF_INET, type=SocketKind.SOCK_STREAM, proto=0, laddr=('127.0.0.1', 3185), raddr=('127.0.0.1', 8888)>
+    # laddr: 本地地址, raddr: 远程地址
+
+    client.send(b'hahahahahah')
+    # 客户端不能发送空字符串
+
+    client.close()
+    print(client)
+    # 客户端关闭后,服务端才能服务其他客户端
+    # 客户端关闭后,服务端如果再接收则接收的是空字符串 => 如果接收的字符串为空的话,表示客户端已经关闭
+    ```
