@@ -706,3 +706,117 @@ print(data)
     # 客户端关闭后,服务端才能服务其他客户端
     # 客户端关闭后,服务端如果再接收则接收的是空字符串 => 如果接收的字符串为空的话,表示客户端已经关闭
     ```
+
+## 基本IO模型
+- 普通套接字实现的服务端的缺陷: 一次只能服务一个客户端, 因为accept和recv阻塞
+
+<img src='./images/IO1.png' width=90%>
+
+## 非阻塞套接字
+- 非阻塞套接字可以服务多个客户端
+- 使用非阻塞套接字实现并发处理
+    - 思路: 将原本阻塞的地方(accept和recv)设置成非阻塞
+    - 缺点
+        - CPU利用率太高(如果资源没有到达,则accept,recv,send等都会消耗资源)
+        - 假如数据来了,需要遍历到这个套接字才会收发数据
+    - server端
+        ```
+        import socket
+
+        server = socket.socket()
+        server.setblocking(False)
+        server.bind(('', 8989))
+        server.listen(1000)
+
+        connList = []
+        while True:
+            try:
+                conn, addr = server.accept()
+                conn.setblocking(False)
+                connList.append(conn)
+            except BlockingIOError as e:
+                pass
+
+            iterConnList = connList[:]
+            for conn in iterConnList:
+                try:
+                    recvData = conn.recv(1024).decode()
+                    print(recvData)
+                    if recvData:
+                        conn.send(recvData.encode())
+                except BlockingIOError as e:
+                    pass
+        ```
+    - client端
+        ```
+        import socket, time
+
+        client = socket.socket()
+        time.sleep(5)
+        client.connect(('127.0.0.1', 8989))
+
+        while True:
+            sendData = input('请输入: ')
+            client.send(sendData.encode())
+            print(client.recv(1024).decode())
+        ```
+
+## 非阻塞IO模型
+<img src='./images/IO2.png' width=80%>
+
+## 使用IO多路复用选择器(epoll)实现并发
+- epoll(IO多路复用选择器)是linux上效率最高的IO多路复用技术
+- python需要主动调用, 而操作系统只负责通知
+- 把socket交给操作系统去监控
+- epoll实现并发
+    - server端
+        ```
+        import selectors, socket
+
+        # epoll实例
+        # epoll_selector = selectors.EpollSelector() # 如果是windows环境上使用DEFAULT
+        epoll_selectors = selectors.DefaultSelector()
+
+        server = socket.socket()
+        server.bind(('', 7634))
+        server.listen(1000)
+
+
+        def recv(conn):
+            recvData = conn.recv(1024).decode()
+            if recvData:
+                conn.send(recvData.encode())
+            else:
+                epoll_selectors.unregister(conn) # 当收到数据为空时取消事件
+
+        def accept(server):
+            conn, addr = server.accept()
+            spoll_selectors.register(conn, selectors.EVENT_READ, recv)
+
+        # 注册事件
+        # server是监听套接字;selectors.EVENT_READ是selectors读取操作系统的数据;accept是回调函数
+        epoll_selectors.register(server, selectors.EVENT_READ, accept)
+
+        # 事件循环
+        while True:
+            events = epoll_selectors.select() # 查询准备好的事件,返回列表,列表中包含客户端套接字,accept函数等
+            # [(SelectorKey(fileobj=<socket.socket fd=808, family=AddressFamily.AF_INET, type=SocketKind.SOCK_STREAM, proto=0, laddr=('0.0.0.0', 7634)>, fd=808, events=1, data=<function accept at 0x000001BB83686840>), 1)]
+
+            for keys, mask in events:
+                callback = keys.data # 自定义的accept函数
+                sock = keys.fileobj # 客户端套接字
+                callback(sock) # 入口
+
+        ```
+    - client端
+        ```
+        import socket
+
+        client = socket.socket()
+        client.connect(('127.0.0.1', 7634))
+
+        while True:
+            sendData = input('请输入: ')
+            client.send(sendData.encode())
+            print(client.recv(1024).decode())
+        ```
