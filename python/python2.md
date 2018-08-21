@@ -788,6 +788,7 @@ print(data)
                 conn.send(recvData.encode())
             else:
                 epoll_selectors.unregister(conn) # 当收到数据为空时取消事件
+                conn.close()
 
         def accept(server):
             conn, addr = server.accept()
