@@ -717,7 +717,7 @@ print(data)
 - 使用非阻塞套接字实现并发处理
     - 思路: 将原本阻塞的地方(accept和recv)设置成非阻塞
     - 缺点
-        - CPU利用率太高(如果资源没有到达,则accept,recv,send等都会消耗资源)
+        - CPU利用率太高(如果资源没有到达,则accept,recv,send等都会消耗资源,相当于python的`while True`中一直会去尝试accept和recv)
         - 假如数据来了,需要遍历到这个套接字才会收发数据
     - server端
         ```
@@ -821,3 +821,99 @@ print(data)
             client.send(sendData.encode())
             print(client.recv(1024).decode())
         ```
+
+# 多进程和多线程
+## 并行与并发
+- 并行: 同时进行
+    - 某一个时间点同时发生
+    - 例子: 多个CPU分别运行程序并得到结果
+- 并发: 同时发生
+    - 某一段时间内同时发生
+    - 例子: 单核CPU在一定时间内依次运行多个程序
+## 多进程实现并行
+- 计算机程序是存储在磁盘上的可执行二进制(或其他类型)文件,只有把他们加载到内存中并被操作系统调用,它们才会拥有其自己的生命周期
+- 进程: 一个正在进行的程序,每个进程拥有自己的地址空间和内存和数据栈以及其它用于跟踪的辅助数据
+- 操作系统负责进程的执行并为其合理分配执行时间
+- 实现并行的必要条件: 总进程数量不多于CPU核心数量
+- 因此,现在运行的程序都是轮询调度产生的并行假象,但是在python层面的确获得了并行
+- 例子(并行)
+    ```
+    import time, multiprocessing
+
+    def test():
+        print('start: ', time.asctime())
+        time.sleep(5)
+        print('end1: ', time.asctime())
+
+    p = multiprocessing.Process(target = test) # p是一个进程的实例化对象
+    p.start() # # 调用p这个进程,但是test函数是由p进程中的run方法调用
+    time.sleep(5)
+    print('end2: ', time.asctime())
+    # 总共运行5秒
+    ```
+
+## 多线程实现并发
+- 线程: 轻量级进程,线程包含于进程,并且所有线程共享相同的上下文(内存空间),即线程不会存在独立的内存空间
+- 线程运行时可以被抢占(中断)和临时挂起
+- 线程的轮询调度机制类似于进程的轮询调度,只不过这个调度不是由操作系统来负责,而是由python解释器来负责
+- 线程遇到阻塞时自动切换
+- 例子
+    ```
+    print(time.asctime())
+    def test(i):
+        if i == 1:
+            return 1
+        if i == 2:
+            return 1
+        else:
+            return test(i - 1) + test(i - 2)
+    t = threading.Thread(target = test, args = (35, ))
+    t.start()
+    time.sleep(5)
+    # 主线程执行t.start(), 子线程执行time.sleep(5)
+    print(time.asctime())
+
+    # 假设test函数执行5秒,则最终执行时间在5-10秒之间
+    ```
+## GIL锁(遇到阻塞自动切换)
+- python在设计时没有多核的概念,因此为了方便和线程安全,直接设计了一个锁,这个锁要求任何进程中一次只有一个线程在执行
+- 因此不能为多个线程分配多个CPU,所以python中的线程只能实现并发,而不能实现真正的并行
+- 在遇到阻塞(不是耗时)的时候,会自动切换进程
+- Django Flask等都是用多线程做的
+
+## 使用多进程与多线程来实现并发服务器
+- 多进程
+    - 产生多个进程,每个进程中都会阻塞,但是每个进程分配的时间很少
+    - 缺点: 很耗资源 
+    - 例子
+
+- 多线程
+
+- 例子
+    ```
+    import socket, multiprocessing, threading
+
+    server = socket.socket()
+    server.bind(('', 9999))
+    server.listen(1000)
+
+    def fun(conn):
+        while True:
+            recvData = conn.recv(1024)
+            if recvData:
+                print(recvData)
+                conn.send(recvData)
+            else:
+                conn.close()
+                break
+
+    while True: # 监听循环
+        conn, addr = server.accept()
+        # 每生成一个对等套接字,就生成一个进程,并交由进程去服务
+        # p = multiprocessing.Process(target = fun, args = (conn, ))
+        # p.start() # 启动进程
+
+        # 每生成一个对等套接字,就生成一个线程,并交由进程去服务
+        t = threading.Thread(target = fun, args = (conn, ))
+        t.start() # 启动线程
+    ```
