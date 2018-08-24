@@ -917,3 +917,122 @@ print(data)
         t = threading.Thread(target = fun, args = (conn, ))
         t.start() # 启动线程
     ```
+
+## 进程和线程的其余操作
+### 等待结束
+    ```
+    import time, multiprocessing
+
+    print('外层: ', time.asctime())
+
+    def fun():
+        print('里层: ', time.asctime())
+        time.sleep(5)
+        print('里层: ', time.asctime())
+
+    p = multiprocessing.Process(target = fun)
+    p.start()
+    p.join() # 写在主进程执行等待5秒之前,主进程等待子进程结束(等待p进程结束,阻塞主进程)
+    time.sleep(5)
+    print('外层: ', time.asctime())
+
+    # 外层:  Thu Aug 23 20:49:46 2018
+    # 里层:  Thu Aug 23 20:49:46 2018
+    # 里层:  Thu Aug 23 20:49:51 2018
+    # 外层:  Thu Aug 23 20:49:56 2018
+    ```
+
+### 查看当前进程或当前线程
+    ```
+    import time, multiprocessing
+
+    print(multiprocessing.current_process())
+
+    def fun():
+        print(multiprocessing.current_process()) # 打印当前进程
+
+    p = multiprocessing.Process(target = fun)
+    print(p)
+    p.start()
+    p = multiprocessing.Process(target = fun)
+    print(p)
+    p.start()
+
+    # <_MainProcess(MainProcess, started)>
+    # <Process(Process-1, initial)> # start之前状态是initial
+    # <Process(Process-2, initial)>
+    # <Process(Process-1, started)>
+    # <Process(Process-2, started)>
+    ```
+
+### 终止进程
+- 线程不能终止,只能等待其结束
+    ```
+    import time, multiprocessing
+
+    print('外层: ', time.asctime())
+
+    def fun():
+        print('里层: ', time.asctime())
+        time.sleep(5)
+        print('里层: ', time.asctime())
+
+    p = multiprocessing.Process(target = fun)
+    p.start()
+
+    time.sleep(2)
+    p.terminate() # 主进程睡眠2秒后关闭子进程p
+    ```
+
+### 进程pid,线程ident
+- 查看pid
+    ```
+    print(multiprocessing.current_process().pid)
+    ```
+- linux查看进程
+    - `ps aux | grep python3`在python3里查找进程
+
+- 设置进程name
+    ```
+    p = multiprocessing.Process(target = fun, name = '123123')
+    p.name = 'ppppp'
+    ```
+- 查看子进程是否存活
+    ```
+    p.is_alive()
+    ```
+
+### 守护进程和线程
+- 子进程守护主进程
+    ```
+    import time, multiprocessing
+
+    def fun():
+        print('start')
+        time.sleep(5)
+        print('end')
+
+    p = multiprocessing.Process(target=fun, daemon=True) # 在进程start之前设置守护模式,守护主进程
+    p.start()
+
+    time.sleep(2)
+    ```
+
+### 使用面向对象的方式使用进程和线程
+- 进程Process或Thread类,重写__init__方法,重写run方法
+    ```
+    import time, multiprocessing
+
+    class MyProcess(multiprocessing.Process):
+        def __init__(self, *args, **kwargs):
+            super().__init__()
+            self.args = args
+            self.kwargs = kwargs
+
+        def run(self):
+            print('My_run')
+
+    p = MyProcess()
+    p.start() # start实际是调用run方法
+    print(p)
+    ```
