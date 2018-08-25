@@ -660,7 +660,9 @@ print(data)
     ```
     import socket
 
-    server = socket.socket() # server: 套接字的实例
+    # socket.AF_INET: IPv4协议
+    # SOCK_STREAM: 面向流的ICP协议
+    server = socket.socket(socket.AF_INET, socket.SOCK_STREAM) # server: 套接字的实例
 
     server.bind(('', 8888)) # server绑定ip和端口,ip为空是为了让所有人都可以访问(默认为0.0.0.0)
 
