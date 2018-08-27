@@ -1038,3 +1038,202 @@ print(data)
     p.start() # start实际是调用run方法
     print(p)
     ```
+
+## 进程之间的通信与解决
+- 进程之间是相互独立的,互不干扰的内存空间
+    ```
+    import multiprocessing
+
+    a = 1
+    def fun():
+        global a
+        a = 2
+
+    p = multiprocessing.Process(target = fun)
+    p.start()
+    p.join() # 等待子进程结束
+
+    print(a) # 1, 因为fun函数和print是分别在两个进程中执行的,两个进程之间失去了联系,所以变量a互不干扰
+    ```
+- 解决进程之间的通信问题
+    - 创造中间进程(管理器进程)负责不同进程中间的通信
+    - 代理负责操作共享的空间
+        ```
+        import multiprocessing
+
+        mgr = multiprocessing.Manager() # 生成一个管理器
+
+        sharedList = mgr.list() # 开辟一个公共空间: mgr.list() mrg.dict() mrg.Queue()(队列)
+        # 公共空间会返回一个代理(列表代理, 字典代理, 队列代理)
+
+        def fun(list):
+            list.append('a')
+
+        p = multiprocessing.Process(target = fun, args = (sharedList, )) # 子进程执行fun函数
+        p.start()
+        p.join()
+
+        print(sharedList) # [a], 通过公共空间拿到子进程的通信
+        ```
+
+## 线程之间抢夺资源的问题和解决
+- 因为线程公用内存空间所以线程不存在线程之间无法通信的问题
+    ```
+    a = 1
+    def fun():
+        global a
+        a = 2
+
+    t = threading.Thread(target = fun)
+    t.start()
+    t.join()
+    print(a) # 2
+    ```
+- 线程之间存在抢夺内存资源的问题
+    ```
+    import threading
+
+    a = 1
+    def fun():
+        global a
+        for i in range(10000000):
+            a += 1
+
+    def fun2():
+        global a
+        for i in range(10000000):
+            a -= 1
+
+    t = threading.Thread(target = fun)
+    t1 = threading.Thread(target = fun2)
+    t.start()
+    t1.start()
+    t.join()
+    t1.join()
+    print(a) # -911678随机
+    ```
+
+- 解决
+    - lock锁(如果需要访问公共资源则需要加锁)
+    - 线程都需要加锁
+    - 加锁后必须解锁
+        ```
+        import threading
+
+        l = threading.Lock() # 生成一个锁的实例
+
+        a = 1
+        def fun():
+            global a
+            for i in range(10000000):
+                # l.acquire() # 上锁
+                # a += 1
+                # l.release() # 解锁
+
+                with l:
+                    a += 1
+
+        def fun2():
+            global a
+            for i in range(10000000):
+                l.acquire()  # 上锁
+                a -= 1
+                l.release()  # 解锁
+
+        t = threading.Thread(target = fun)
+        t1 = threading.Thread(target = fun2)
+        t.start()
+        t1.start()
+        t.join()
+        t1.join()
+        print(a) # 1, 但是效率很低
+
+        ```
+
+## 通过队列解决通信问题
+- 队列
+    - 一个入口,一个出口
+    - 先入先出
+    - 队列如果有多个进程或线程在使用,则队列就是公共资源
+
+- 公用方法
+    - `q.put(item)`
+        - 入队,put一次之后底层的计数器加一,队列满了之后会阻塞
+    - `q.empty()`是否为空,返回布尔值
+    - `q.full()`是否为满,返回布尔值
+    - `q.get()`
+        - 出队,队列为空时阻塞
+    - `q.qsize()`查看队列长度
+    - `q.task_done()`任务结束,计数器减一
+
+- 线程队列
+    ```
+    import queue
+
+    q = queue.Queue(5) # 这个队列能容纳多少个
+
+    q.put('a') # 入队, 当队列满了之后会阻塞
+
+    q.get() # 出队, 当队列为空时阻塞
+    ```
+
+- 进程队列
+    ```
+    import multiprocessing
+
+    mgr = multiprocessing.Manager()
+
+    q = mgr.Queue()
+
+    q.put('a')
+
+    q.get()
+    ```
+
+## 生产者与消费者模式
+
+- 生产者: 只需要往队列里面丢东西(生产者不需要关系消费者)
+- 消费者: 只需要从队列中拿东西(消费者也不需要关心生产者)
+- 生产者模式:
+    - 只关心队列是否已满,没满则生产,满了就阻塞
+- 消费者模式:
+    - 只关心队列是否为空,不为空则读取,为空就阻塞
+- 例子(线程或进程版本)
+    ```
+    import queue
+    import threading
+    import random
+    import multiprocessing
+
+    mgr = multiprocessing.Manager()
+    q = mgr.Queue(5) # 进程版本
+    q = queue.Queue(5) # 线程版本
+
+
+    class produce(threading.Thread):
+        def __init__(self, queue):
+            super().__init__()
+            self.queue = queue
+
+        def run(self):
+            while True: # 不断生产
+                item = random.randint(0, 100)
+                self.queue.put(item)
+                print('生产了: {}'.format(item))
+
+
+    class customer(threading.Thread):
+        def __init__(self, queue):
+            super().__init__()
+            self.queue = queue
+
+        def run(self):
+            while True: # 不断读取
+                item = self.queue.get()
+                print('消费了: {}'.format(item))
+
+    p = produce(q)
+    c = customer(q)
+    p.start()
+    c.start()
+    ```
