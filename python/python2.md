@@ -1089,7 +1089,7 @@ print(data)
     t.join()
     print(a) # 2
     ```
-- 线程之间存在抢夺内存资源的问题
+- 线程之间存在抢夺内存资源的问题,所以需要lock锁来解决
     ```
     import threading
 
@@ -1155,6 +1155,7 @@ print(data)
     - 一个入口,一个出口
     - 先入先出
     - 队列如果有多个进程或线程在使用,则队列就是公共资源
+    - 用来处理并发通信
 
 - 公用方法
     - `q.put(item)`
@@ -1236,4 +1237,198 @@ print(data)
     c = customer(q)
     p.start()
     c.start()
+    p.join()
+    c.join()
     ```
+
+## 池
+- 进程池和线程池
+- 线程或进程join后无法再次start
+- 创造可以重复使用的线程
+    - 主线程作为生产者,子线程作为消费者
+    - 线程可以执行多个任务,即线程可以重复使用
+    - 版本1
+        ```
+        import threading
+        import multiprocessing
+
+        def fun1():
+            print('我是任务1', threading.current_thread())
+        def fun2():
+            print('我是任务2', threading.current_thread())
+
+        class MyThread(threading.Thread):
+            def __init__(self):
+                super().__init__()
+                mgr = multiprocessing.Manager()
+                self.queue = mgr.Queue(10)
+
+            # 子线程调用,充当消费者,不断去get
+            def run(self):
+                while True:
+                    task = self.queue.get()
+                    print('get任务,准备执行')
+                    task()
+                    print('任务执行完成')
+
+            # 主线程调用,充当生产者,不断去put
+            def apply_async(self, fun):
+                self.queue.put(fun)
+
+        t = MyThread()
+        t.start()
+        t.apply_async(fun1)
+        t.apply_async(fun2)
+        ```
+    
+    - 版本2
+        ```
+        import threading
+        import multiprocessing
+
+        def fun1(i, j):
+            print('我是任务%s %s'%(i, j), threading.current_thread())
+        def fun2(i, j):
+            print('我是任务%s %s'%(i, j), threading.current_thread())
+
+        class MyThread(threading.Thread):
+            def __init__(self):
+                super().__init__()
+                mgr = multiprocessing.Manager()
+                self.queue = mgr.Queue(10)
+                self.daemon = True # 在start之前设置守护进程
+                self.start() # 实例(t)start,实例化的时候开启线程
+
+            # 子线程调用,充当消费者,不断去get
+            def run(self):
+                while True:
+                    res = self.queue.get()
+                    task, args, kwargs = res
+                    print('-----get到任务,准备执行-----')
+                    task(*args, **kwargs)
+                    self.queue.task_done() # 任务结束,计数器减1
+                    print('-----任务执行完成-----')
+
+            # 主线程调用,充当生产者,不断去put
+            def apply_async(self, fun, *args, **kwargs):
+                self.queue.put((fun, args, kwargs))
+
+            # 主线程等待子线程结束,子线程关闭后主线程关闭
+            def join(self):
+                self.queue.join()
+
+        t = MyThread()
+        t.apply_async(fun1, 1, '1-1')
+        t.apply_async(fun2, 2, '2-2')
+        t.join() # 主任务阻塞,等待执行子任务
+        ```
+
+- 池的概念
+    - 事先准备好可以重复使用的线程
+    - 主线程充当生产者,向线程池提交任务
+    - 线程池充当消费者,负责接收任务,并将任务分配到空闲的线程中去执行
+    - 实现线程池(不继承)
+        ```
+        import queue, threading
+
+        class Thread_pool:
+            def __init__(self, n): # 准备n个池
+                self.queue = queue.Queue()
+                for i in range(n): # 在一个池里开n个线程
+                    threading.Thread(target=self.fun, daemon=True, args=()).start()
+
+            # 消费者
+            def fun(self):
+                while True:
+                    task, args, kwargs = self.queue.get()
+                    task(*args, **kwargs)
+                    self.queue.task_done()
+
+            # 生产者
+            def apply_async(self, fun, *args, **kwargs):
+                self.queue.put((fun, args, kwargs))
+
+            def join(self):
+                self.queue.join()
+
+        def test(i):
+            print('任务' + str(i))
+
+
+        t = Thread_pool(10)
+        t.apply_async(test, 1)
+        t.apply_async(test, 2)
+        t.join()
+
+        ```
+
+    - Python自带的池
+        ```
+        from multiprocessing.pool import ThreadPool # 线程池
+        from multiprocessing import pool # 进程池
+
+        def test(*args, **kwargs):
+            print(args, kwargs)
+
+        p = ThreadPool(2)
+        p.apply_async(func=test, args=(1, 2), kwds={'a': 10})
+        p.apply_async(func=test, args=(3, 4), kwds={'b': 11})
+        p.close() # 关闭队列之后,无法再put
+        p.join()
+        ```
+    
+    - python自带的池的常用方法
+        ```
+        import time
+        from multiprocessing import pool # 进程池
+        from multiprocessing.pool import ThreadPool # 线程池
+
+        c = multiprocessing.cpu_count # cpu核心数
+
+        def func():
+            time.sleep(5)
+            return 1
+
+        p = ThreadPool(5)
+        result = p.apply_async(func=func)
+        print(result) # 不会等待5秒,立即打印返回结果<multiprocessing.pool.ApplyResult object at 0xb7146cac>
+
+        r = result.get() # 获取func函数的返回值
+        print(r) # 返回1
+        ```
+
+    - 使用池来实现并发服务器
+        ```
+        import socket, multiprocessing, threading
+        from multiprocessing.pool import ThreadPool
+
+        server = socket.socket()
+        server.bind(('', 8765))
+        server.listen(1000)
+
+        def work_thread(sock):
+            while True:
+                recvData = sock.recv(1024)
+                if recvData:
+                    print(recvData)
+                    sock.send(recvData)
+                else:
+                    sock.close()
+                    break
+
+        def work_process(server):
+            thread_pool = ThreadPool(2 * multiprocessing.cpu_count()) # 生成线程池
+            while True:
+                sock, addr = server.accept()
+                thread_pool.apply_async(func=work_thread, args=(sock, ))
+
+
+
+        n = multiprocessing.cpu_count()
+        p = multiprocessing.Pool(n) # 根据CPU开启进程池
+        for i in range(n):
+            p.apply_async(func = work_process, args = (server, ))
+        p.close()
+        p.join()
+
+        ```
