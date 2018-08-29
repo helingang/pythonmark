@@ -1432,3 +1432,133 @@ print(data)
         p.join()
 
         ```
+
+# 协程
+- 协程: 微线程
+- 协程通过代码控制
+- 协程本质就是在不同函数之间切换
+    ```
+    def fun():
+        a = (yield '第一个yield')
+        print('a的值是%s'%a)
+        b = (yield '第二个yield')
+        print('b的值是%s'%b)
+        c = (yield '第三个yield')
+        print('b的值是%s'%c)
+    
+    g = fun()
+
+    print(g.send(None)) # 返回'第一个yield'字符串,可以看成next(g)
+    print(g.send(1)) # 返回'第二个yield'字符串,并将1赋值给变量a
+    print(g.send(2)) # 返回'第三个yield'字符串,并将2赋值给变量b
+
+    # 第一个yield
+    # a的值是1
+    # 第二个yield
+    # b的值是2
+    # 第三个yield
+    ```
+
+- 生产者消费者模式使用协程
+    ```
+    import random, time
+
+    # 生产者
+    def produce(g):
+        next(g)
+        while True:
+            item = random.randint(0, 99)
+            print('生产了%s' % item)
+            g.send(item)
+            time.sleep(1)
+    
+    # 消费者, 生成器, 协程
+    def consumer()
+        while True:
+            item = (yield )
+            print('消费了%s' % item)
+
+    g = consumer()
+    produce(g)
+    ```
+
+- greenlet协程
+    - 底层是C写的,是原生的协程
+    - 作用是把函数变成协程
+    - 使用greenlet实现
+        ```
+        from greenlet import greenlet
+        import random
+
+        def produce():
+            while True:
+                item = random.randint(0, 99)
+                print('生产了%s' % item)
+                c.switch(item) # 传入item
+        
+        def consumer():
+            while True:
+                item = p.switch() # 取item
+                print('消费了%s' % item)
+
+        p = greenlet(produce) # 将函数变为协程
+        c = greenlet(consumer) # 将函数变为协程
+        c.switch() # 让消费者进入暂停状态,恢复时才能接收数据
+        ```
+
+- gevent协程
+    - 封装了libev(基于epoll)和greenlet两个库
+    - 价值: 遇到阻塞就切换到另一个协程继续执行
+    - gevent实现并发服务器(多协程)
+        ```
+        from gevent import monkey;monkey.patch_socket() # 补丁,重写一个基于epoll实现的socket
+
+        import gevent, socket, threading
+
+        server = socket.socket()
+        server.bind(('', 5656))
+        server.listen(1000)
+
+        def worker(sock):
+            while True:
+                recvData = sock.recv(1024)
+                if recvData:
+                    print(recvData)
+                    sock.send(recvData)
+                else:
+                    sock.close()
+                    break
+
+        while True:
+            sock, addr = server.accept()
+            # t = threading.Thread(target=worker, args=(sock,))
+            # t.start()
+
+            gevent.spawn(worker, sock) # 多协程处理
+        ```
+    - 生产者与消费者模式使用gevent实现
+        ```
+        from gevent import monkey;monkey.patch_all()
+        import gevent
+        from gevent.queue import Queue
+        import random
+
+        q = Queue(5)
+
+        def produce(q):
+            while True:
+                item = random.randint(0, 99)
+                print('生产了%s' % item)
+                q.put(item)
+
+        def consumer(q):
+            while True:
+                item = q.get()
+                print('消费了%s' % item)
+
+
+        p = gevent.spawn(produce, q) # 将函数封装成协程
+        c = gevent.spawn(consumer, q) # 将函数封装成协程
+
+        gevent.joinall([p, c]) # 生产5个消费5个,如果不填队列值则会一直生产,遇到阻塞就切换如果使用time.sleep()则是生产1个消费1个
+        ```
