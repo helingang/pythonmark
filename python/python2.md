@@ -1315,7 +1315,7 @@ print(data)
 
             # 主线程等待子线程结束,子线程关闭后主线程关闭
             def join(self):
-                self.queue.join()
+                self.queue.join() # 计数器不为0的时候,阻塞 
 
         t = MyThread()
         t.apply_async(fun1, 1, '1-1')
