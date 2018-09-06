@@ -276,3 +276,98 @@
                     <script src="{% static 'js/index.js' %}"></script>
                 </html>
                 ```
+
+- 自定义过滤器
+    - 目录`common/templatetags`下存放`common_extra.py`文件
+    - 在`INSTALLED_APPS`中注册`common`,可以把common看成一个app
+    - `common_extra.py`
+        ```
+        from django import template
+
+        register = template.Library()
+
+        @register.filter # 装饰器注册自定义过滤器1
+        def myLower(str):
+            return str.lower()
+
+        @register.filter
+        def myUpper(str):
+            return str.upper()
+
+        # register.filter(myLower) # 注册自定义过滤器2
+        ```
+    - `html`文件
+        ```
+        {% load common_extras %} {# 加载自定义py文件 #}
+        <!DOCTYPE html>
+        <html lang="en">
+        <head>
+            <meta charset="UTF-8">
+            <title>自定义过滤器</title>
+        </head>
+        <body>
+            内置的过滤器: {{ str | lower }}
+            <br>
+            自定义的过滤器: {{ str | myLower }}
+            <br>
+            自定义的过滤器: {{ str | myUpper | cut:' ' | slice:'1:5'}}
+        </body>
+        </html>
+        ```
+
+- 自定义标签
+    - 简单标签(simple_tag)
+        - 在`common_extras.py`中
+            ```
+            from django import template
+
+            register = template.Library()
+
+            @register.simple_tag # 注册标签
+            def current_time(format_string):
+                format_string = format_string or '%Y年%m月%d月 %H点%M分%S秒'
+                return datetime.datetime.now().strftime(format_string)
+
+            @register.simple_tag(takes_context=True) # 注册标签,并且直接接收视图的参数
+            def current_time2(context):
+                format_string = context.get('t')
+                return datetime.datetime.now().strftime(format_string)
+            ```
+        - 在`html`中
+            ```
+            {% current_time t %}
+            {% current_time2  %}
+            ```
+    
+    - 包含标签
+        - 在`common_extras.py`中
+            ```
+            @register.inclusion_tag('show_tag.html') # 注册包含标签
+            def show():
+                learn = ['python1', 'javascript1', 'html1']
+                return {'learn': learn}
+
+            @register.inclusion_tag('show_tag.html') # 注册包含标签
+            def show2(xx):
+                return {'learn': xx}
+
+            @register.inclusion_tag('show_tag.html', takes_context=True) # 注册包含标签
+            def show3(context):
+                xx = context.get('l') # 从上下文获取l
+                return {'l': xx}
+            ```
+        - 在`show_tags`html中
+            ```
+            <ul>
+                {% for i in learn %}
+                    <li>{{ i }}</li>
+                {% endfor %}
+            </ul>
+            ```
+
+        - 在实际使用的html中
+            ```
+            {% show %}
+            {% show2 l %}
+            {% show3 %}
+            ```
