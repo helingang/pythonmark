@@ -57,3 +57,145 @@ querySelectorAll(); //获取的是类数组
 
 
 ### JS操作标签的属性
+- 操作合法属性
+    - 修改id: `document.getElementById('box1').id = 'box2'`
+    - 修改class: `document.getElementById('box').className = 'box2'`
+- 操作自定义属性
+    - `x.getAttribute('abc')`
+    - `x.setAttribute('abc', '123')`
+    - `x.removeAttribute('abc')`
+
+### JS操作CSS样式
+- `oDiv.style.width`
+
+## 循环
+- for
+- while
+- do while
+
+## 条件
+- if
+- switch
+
+## 函数
+- 匿名函数
+
+- 有名函数
+
+- 函数表达式的自执行
+    ```
+    (function(){}());
+    (function(){})();
+    +function(){}();
+    -function(){}();
+    ~function(){}();
+    !function(){}();
+    ```
+
+- 传参
+    - 定参
+    - 不定参
+
+## call,apply,bind
+### call()
+- 在函数执行阶段改变`this`指向,`call`会帮助前面的函数执行
+- `call`的第一个参数代表`this`的执行,其他实参依次对应原函数的形参
+    ```
+    function test() {
+        console.log(this)
+    }
+    test.call(document);
+    ```
+
+### apply()
+- 在函数执行阶段改变`this`指向,`apply`会帮助前面的函数执行
+- `apply`的第一个参数代表函数的`this`指向,数组的第一个实参对应原函数第一个形参
+
+### bind() (不支持IE8及以下)
+- 在函数引用时改变`this`指向,`bind`不会帮助前面的函数执行,当函数被执行时改变`this`指向
+
+### 使用三个方法的时机
+1. `call`和`apply`在函数需要自执行且需要改变`this`指向时使用
+2. `bind`在函数是被动执行(例如事件函数)时或者是函数作为参数传入(因为此时函数还未执行)时且需要改变`this`时使用
+
+3. `bind`
+    ```
+    oBox1.onclick = function () {
+        console.log(this);
+        fn.call(this);
+    };
+    function fn() {
+        if ( this.style.backgroundColor === 'black' ) {
+            this.style.backgroundColor = 'red'
+        } else {
+            this.style.backgroundColor = 'black'
+        }
+    }
+    ```
+
+
+## 定时器
+- `setInterval(fn, time, p1, p2)`
+    - 规则与setTimeout相同
+- `setTimeout(fn, time, p1, p2)`
+
+- 执行
+    - `setTimeout(fn, 1000)`
+    - `setTimeout( function (){}, 1000)`
+- 执行(需要传参)
+    - `setTimeout( fn.bind(null, 1, 2), 1000)`
+    - `setTimeout( fn, 2000, 1, 2)`
+- `clearTimeout() / clearInterval()`
+
+- 设置定时器会在到达时间后将代码添加到任务队列中
+    ```
+    function fib(i) {
+        if (i === 1) {
+            return 1
+        }
+        if (i === 2) {
+            return 1
+        } else {
+            return fib(i - 1) + fib(i - 2)
+        }
+    }
+
+    console.log(fib(40));
+
+    setTimeout(function () {
+        console.log('100ms')
+    }, 1000);
+
+    ```
+
+## requestAnimationFrame()
+- window下的属性
+- 形式等同于`setTimeout(fn, 13)`
+- 刷新频率自动调整与浏览器一致
+- 不兼容IE8及以下
+- 主要用于做动画
+- CSS3底层用这个写的
+- 同一页面有多个时会统一执行,但是`setTimeout()`会单独执行
+- 兼容
+    ```
+    window.requestAnimationFrame = window.requestAnimationFrame || function (fn) {
+        setTimeout(fn, 13)
+    };
+    window.cancelAnimationFrame = window.cancelAnimationFrame || function (t) {
+        clearTimeout(t)
+    };
+    ```
+
+## getComputedStyle(oBox).width
+- 兼容IE
+    ```
+    function getStyle(obj, attr) {
+        return getComputedStyle ? getComputedStyle(obj)[attr] : obi.currentStyle[attr]
+    }
+
+    function getObj(obj) {
+        return obj.currentStyle || getComputedStyle(obj)
+    }
+
+    console.log(getObj(oBox1).width);
+    ```
