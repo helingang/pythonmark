@@ -199,3 +199,23 @@ querySelectorAll(); //获取的是类数组
 
     console.log(getObj(oBox1).width);
     ```
+
+## Math对象
+- `max`和`min`
+    - `Math.max(a, b, c, d)`
+    - `Math.min(a, b, c, d)`
+    - `Math.max.apply(Math, arr)`
+
+- 取整方法
+    - `Math.ceil()`
+    - `Math.floor()`
+    - `Math.round()`
+
+- `random()`
+    - 返回两个参数的随机值(默认0-1)
+- 其他方法
+    - `Math.abs()`
+    - `Math.pow()`a**b
+    - `Math.sin()`
+    - `Math.PI`
+    - `num.toFixed(n)`保留n位小数
