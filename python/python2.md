@@ -1333,7 +1333,7 @@ print(data)
 
         class Thread_pool:
             def __init__(self, n): # 准备n个池
-                self.queue = queue.Queue()
+                self.queue = queue.Queue(n)
                 for i in range(n): # 在一个池里开n个线程
                     threading.Thread(target=self.fun, daemon=True, args=()).start()
 
