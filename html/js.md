@@ -219,3 +219,39 @@ querySelectorAll(); //获取的是类数组
     - `Math.sin()`
     - `Math.PI`
     - `num.toFixed(n)`保留n位小数
+
+## 时间对象
+- 创建
+    - `var d = Date()`
+    - `var d = new Date()`
+    - `var d = new date`
+    - `var d = Date.now()`
+    - `var d = new Date('2018/10/11)`
+    - `var d = new Date(789854613232)`
+- Date对象方法
+    - get
+        - `d.getFullYear()`
+        - `d.getMonth() + 1`
+        - `d.getDate()`
+        - `d.getDay`获取星期
+        - `d.getHours()`
+        - `d.getMinutes()`
+        - `d.getSeconds()`
+        - `d.getMilliseconds()`
+        - `d.getTime()`
+        - `Date.UTC(year, month, date...)`返回毫秒数
+        - `d.getTimezoneOffset()`获取与0时区相差的分钟数
+    - set
+        - `d.setFullYear(2020)`
+        - ...
+    - 转字符串
+        1. `d.toUTCString()` //Fri, 09 Feb 2018 05:18:20 GMT;转化成格林尼治时间
+        2. `d.toTimeString()` //12:54:41 GMT+0800 (中国标准时间)
+        3. `d.toDateString()` //Wed Feb 07 2018
+        4. `d.toLocaleTimeString()` //下午12:54:41
+        5. `d.toLocaleDateString()` //2018/2/7
+        6. `d.toLocaleString()` //2018/2/7 下午12:54:41
+    - Date对象间的运算
+        - `var xd = new Date() - new Date(2030)`返回毫秒
+
+- 作用域
