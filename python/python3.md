@@ -371,3 +371,43 @@
             {% show2 l %}
             {% show3 %}
             ```
+
+## 模型基础
+- ORM概念
+    - 对象关系映射
+    - ORM的优势:不用直接编写SQL代码,只需要操作对象一样操作数据
+    - 一个数据表对应一个模型类,表中的字段对应类属性
+
+- 配置数据库连接`settings.py`并注册app
+    ```
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.mysql',
+            'NAME': 'mydb', # 数据库的名称
+            'USER': 'admin',
+            'PASSWORD': 'sa',
+            'HOST': '132.232.110.71',
+            'PORT': '3306'
+        }
+    }
+    ```
+
+- `__init__`
+    ```
+    import pymysql
+    pymysql.install_as_MySQLdb()
+    ```
+
+- 创建模块`models`
+    ```
+    class User(models.Model):
+        id = models.AutoField(primary_key=True) # 自增长主键
+        name = models.CharField(max_length=30)
+        age = models.IntegerField()
+    ```
+
+- 创建映射文件
+    - `python manage.py makemigrations`
+
+- 将映射文件中的数据提交到数据库中
+    - `python manage.py migrate`
