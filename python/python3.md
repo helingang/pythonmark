@@ -405,6 +405,8 @@
         id = models.AutoField(primary_key=True) # 自增长主键
         name = models.CharField(max_length=30)
         age = models.IntegerField()
+        # 新增字段
+        city = models.CharField(max_length=50, default='')
     ```
 
 - 创建映射文件
@@ -436,3 +438,60 @@
         return HttpResponse('插入数据')
     ```
 
+- 查询数据
+    ```
+    def search_user(request):
+        # QuerySet: 支持切片,不支持负索引
+
+        # .all返回QuerySet对象(数据库查询的集合)
+        # result = User.objects.all()
+        # print(result)
+        # print(result[:2])
+
+        # .get加条件只能返回一条数据(条件对应的结果必须唯一)
+        # result = User.objects.get(name__contains='M')
+        # print(result)
+
+        # .filter加条件查询,返回QuerySet类型
+        result = User.objects.filter(id__gte=3)
+        print(result[0])
+
+        return HttpResponse(result)
+    ```
+
+- 更新数据
+    ```
+    def update_user(request):
+        # rs = User.objects.get(id=6)
+        # rs.age += 1
+        # rs.save()
+
+        # rs = User.objects.filter(id=6)
+        # print(rs)
+        # rs.update(age=26) # 如何age+=1
+
+        # rs = User.objects.all()
+        # rs.update(city='cd')
+
+
+        return HttpResponse('修改数据')
+    ```
+
+- 删除数据
+    ```
+    def del_user(request):
+        # 实例对象的删除
+        # rs = User.objects.get(id=6)
+        # rs.delete()
+
+        # QuerySet对象的删除
+        # rs = User.objects.filter(id=7)
+        # rs.delete()
+        # User.objects.all().delete()
+
+        return HttpResponse('删除数据')
+    ```
+
+- 删除表
+    - 注释`models.py`文件中的类(即表)
+    - 执行`makemigration`和`migrate`
