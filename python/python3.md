@@ -448,13 +448,25 @@
         # print(result)
         # print(result[:2])
 
-        # .get加条件只能返回一条数据(条件对应的结果必须唯一)
+        # .get加条件只能返回一个实例对象(条件对应的结果必须唯一)
         # result = User.objects.get(name__contains='M')
         # print(result)
 
         # .filter加条件查询,返回QuerySet类型
         result = User.objects.filter(id__gte=3)
         print(result[0])
+
+        # 常用的查询方法
+        rs = User.objects.all()
+        rs = User.objects.first() # 实例对象
+        rs = User.objects.last() # 实例对象
+        rs = User.objects.filter(name='sam') # 返回QuerySet
+        rs = User.objects.exclude(name='sam') # 反向查询
+        rs = User.objects.get(name='sam') # 获取唯一的一条数据
+        rs = User.objects.order_by('-age') # 逆向排序
+        rs = User.objects.order_by('age', 'id') # 多项排序
+        rs = User.objects.all().values() # 将QuerySet转换成字典
+        rs = User.objects.count()
 
         return HttpResponse(result)
     ```
@@ -495,3 +507,21 @@
 - 删除表
     - 注释`models.py`文件中的类(即表)
     - 执行`makemigration`和`migrate`
+
+- 常见的查询条件
+    - `exact`等于
+    - `iexact`忽略大小写的等于
+    - `contains`包含
+    - `icontains`忽略大小写的包含
+    - `startwith`以什么开始
+    - `istartwith`忽略大小写 以什么开始
+    - `endswith`
+    - `iendswith`
+    - `in`
+        - `.filter(age__in=[20,21,22])`
+    - `gt`大于
+    - `gte`大于等于
+    - `lt`小于
+    - `lte`小于等于
+    - `range`区间
+    - `isnull`判断是否为空
