@@ -392,7 +392,7 @@
     }
     ```
 
-- `__init__`
+- 项目目录的`__init__`文件
     ```
     import pymysql
     pymysql.install_as_MySQLdb()
@@ -400,6 +400,7 @@
 
 - 创建模块`models`
     ```
+    # movie_user表示一张表
     class User(models.Model):
         id = models.AutoField(primary_key=True) # 自增长主键
         name = models.CharField(max_length=30)
@@ -411,3 +412,27 @@
 
 - 将映射文件中的数据提交到数据库中
     - `python manage.py migrate`
+
+- 多种方式添加数据并保存
+    ```
+    def add_user(request):
+        # 方法一
+        # user = User(name='sam', age=18, sex=1)
+        # user.save()
+
+        # 方法二
+        # user = User()
+        # user.name = 'Jack'
+        # user.age = 20
+        # user.sex = 0
+        # user.save()
+
+        # 方法三
+        # User.objects.create(name='Ros', age=22, sex=1)
+
+        # 方法四
+        User.objects.get_or_create(name='Mar', age=24, sex=0) # 不会重复创建
+
+        return HttpResponse('插入数据')
+    ```
+
