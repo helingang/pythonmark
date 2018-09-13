@@ -546,4 +546,35 @@
         - auto_now_add 类似于createTime
 
 - 表关系
-    - 
+    - 一对多 -> 外键 -> ForeignKeyField
+    - 一对一 -> 外键+唯一键 -> OneToOneField
+    - 多对多 -> 关联表:外键+联合唯一 -> ManyToManyField
+    - 参数
+        - 级联删除`on_delete=models.CASCADE`表示如果主表中Department中学院被删除,则这个外键表中的数据也要同时被删除
+    - 例子
+        ```
+        class Department(models.Model):
+            d_id = models.AutoField(primary_key=True)
+            d_name = models.CharField(max_length=30)
+            create_time = models.DateTimeField(auto_now_add=True)
+            update_time = models.DateTimeField(auto_now=True)
+
+        class Student(models.Model):
+            s_id = models.AutoField(primary_key=True)
+            s_name = models.CharField(max_length=30)
+            department_id = models.ForeignKey('Department', on_delete=models.CASCADE) # 级联删除: on_delete=models.CASCADE 表示如果主表中Department中学院被删除,则这个外键表中的数据也要同时被删除
+            create_time = models.DateTimeField(auto_now_add=True)
+            update_time = models.DateTimeField(auto_now=True)
+
+        class Course(models.Model):
+            c_id = models.AutoField(primary_key=True)
+            c_name = models.CharField(max_length=30)
+            student = models.ManyToManyField('Student') # 这一行会生成一个表,course-student
+
+        class stu_detail(models.Model):
+            s_id = models.OneToOneField('Student', on_delete=models.CASCADE)
+            age = models.IntegerField()
+            gender = models.BooleanField(default=1)
+            city = models.CharField(max_length=100, null=True)
+        ```
+
