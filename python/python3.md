@@ -525,3 +525,25 @@
     - `lte`小于等于
     - `range`区间
     - `isnull`判断是否为空
+
+- 常用字段和参数
+    - 字段
+        - id(默认) -> AutoField
+        - varchar -> CharField
+        - int -> IntegerField
+        - longtext -> TextField
+        - date -> DateField 日期
+        - datedatetime -> DateTimeField 日期时间
+        - tinyint -> BooleanField
+    - 参数
+        - primary_key
+        - max_length
+        - unique
+        - null
+        - blank 为True时form表单验证时可以为空,默认为False
+        - default
+        - auto_now 类似于updateTime,注意:update方法不能更新时间,需要用save方法
+        - auto_now_add 类似于createTime
+
+- 表关系
+    - 
