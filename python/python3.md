@@ -545,7 +545,7 @@
         - auto_now 类似于updateTime,注意:update方法不能更新时间,需要用save方法
         - auto_now_add 类似于createTime
 
-- 表关系
+- 表关系创建
     - 一对多 -> 外键 -> ForeignKeyField
     - 一对一 -> 外键+唯一键 -> OneToOneField
     - 多对多 -> 关联表:外键+联合唯一 -> ManyToManyField
@@ -577,4 +577,25 @@
             gender = models.BooleanField(default=1)
             city = models.CharField(max_length=100, null=True)
         ```
+
+- 关系表的数据操作
+    ```
+    def test(request):
+        # 新增
+        # Department(d_name='计算机学院').save()
+        # Department(d_name='外国语学院').save()
+        # Department(d_name='艺术学院').save()
+
+        # 新增数据
+        # s1 = Student(s_name='张三', department_id_id=1)
+
+        # 新增数据,并为外键赋值
+        # d1 = Department.objects.get(d_id=1)
+        # s1 = Student(s_name='李四')
+        # s1.department_id = d1
+        # s1.save()
+
+        return HttpResponse('test')
+    ```    
+    
 
