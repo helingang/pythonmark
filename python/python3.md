@@ -592,8 +592,27 @@
         # 新增数据,并为外键赋值
         # d1 = Department.objects.get(d_id=1)
         # s1 = Student(s_name='李四')
-        # s1.department_id = d1
+        # s1.department_id = d1 # 外键是一个实例
         # s1.save()
+
+        # c1 = Course(c_name='Python')
+        # c1.save()
+        # Course.objects.create(c_name='Java')
+
+
+        d1 = Department.objects.get(d_id=1) # 计算机学院
+        s1 = Student.objects.get(s_id=2) # 张三
+        c1 = Course.objects.get(c_id=1) # Python
+        #
+        # print(d1.student_set.all()) # 查询计算机学院d1在学生表中有多少条数据外键关联
+        # print(s1.department_id_id)
+
+        # d2 = Department.objects.get(d_id=2) # 外国语学院
+        # d2.student_set.add(s1) # 将s1这个学生的外键改为外国语学院
+
+        # d1.student_set.create(s_name='王五') # 添加一个学生,外键是计算机学院
+
+
 
         return HttpResponse('test')
     ```    
