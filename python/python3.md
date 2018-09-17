@@ -642,6 +642,61 @@
         return HttpResponse('test')
     ```    
 
+## 请求与相应
+- 请求
+    - 头
+        - `path` 路径,不包含域名
+        - `method` 请求方法
+        - `encoding` 编码方式
+        - `GET` 类似于字典的对象,包含get请求的参数
+        - `POST` 类似于字典的对象,包含post请求方式的所有参数
+        - `FILES` 一个类似于字典的对象,包含所有的上传文件
+        - `COOKIES` 一个标准的Python字典,包含所有的cookie,键值均为字符串
+        - `session` 一个既可读又可写的类似于字典的对象,表示当前的会话,只有当Django启用时才可用
+        - `is_ajax()` 判断是否是ajax请求
+    - 方法
+        ```
+        print(request.GET.get('a')) # 拿到一个值
+        print(request.GET.getlist('a')) # 拿到一个集合
+        ```
+- 响应
+    - `HttpResponse()`返回简单的字符串对象
+    - `render()`渲染模板
+    - `redirect()`重定向
+    - `JsonResponse()`返回json数据
+    - 头
+        - `content` 返回的内容,字符串类型
+        - `charset` response采用的编码类型
+        - `status_code` 响应状态码
+        - `content-type` 指定输出的MIME类型
+    - 方法
+        ```
+        def test_json(request):
+        a = request.GET.get('a')
+        print(a)
+        if int(a) == 2:
+            return JsonResponse({
+                'abc': 321
+            })
+        else:
+            return JsonResponse({
+                'error': '400'
+            })
+        ```
+## 文件上传
+    ```
+    from test_project.settings import MEDIA_ROOT
+    def upload(request):
+        if request.method == 'GET':
+            return render(request, 'upload.html')
+        elif request.method == 'POST':
+            f1 = request.FILES['file']
+            fs_name = os.path.join(MEDIA_ROOT, f1.name)
+            with open(fs_name, 'wb') as f:
+                for c in f1.chunks():
+                    f.write(c)
+            return HttpResponse('数据存入成功')
 
+    ```
     
 
