@@ -580,6 +580,8 @@
 
 - 关系表的数据操作
     ```
+    from django.db.models import Count, Avg, Max, Min, Sum
+
     def test(request):
         # 新增
         # Department(d_name='计算机学院').save()
@@ -603,18 +605,43 @@
         d1 = Department.objects.get(d_id=1) # 计算机学院
         s1 = Student.objects.get(s_id=2) # 张三
         c1 = Course.objects.get(c_id=1) # Python
+        c2 = Course.objects.get(c_id=2) # Java
+        s2 = Student.objects.get(s_id=3) # 李四
         #
         # print(d1.student_set.all()) # 查询计算机学院d1在学生表中有多少条数据外键关联
         # print(s1.department_id_id)
 
+        # add
         # d2 = Department.objects.get(d_id=2) # 外国语学院
         # d2.student_set.add(s1) # 将s1这个学生的外键改为外国语学院
 
+        # create
         # d1.student_set.create(s_name='王五') # 添加一个学生,外键是计算机学院
+        # s1.course_set.create(c_name='Node') # 添加一个课程,并在中间信息表中把学生和课程关联
 
+        # add
+        # c2.student.add(s2) # 在中间表添加关系
 
+        # remove
+        # s2.course_set.remove(c2) # 删除关联表信息
+
+        # clear
+        # s1.course_set.clear() # 清空关联表中所有s1的数据
+
+        # 多表查询
+        Student.objects.filter(department_id__d_name='外国语学院') # 在学生表中查询名称为外国语学院的学生信息
+        Department.objects.filter(student__s_name__contains='李') # 查询学生名字中包含xx的学院名称
+        Department.objects.filter(student__course__c_name='Node')# 查询报了Node课程的学生的所属学院的信息
+
+        # 聚合查询
+        rs = User.objects.add().aggregate(Avg('age'))
+        
+        Student.objects.all().values('department').annotate(count=Count('department)).values('department', count) # 统计学院里学生的数量
+        # select count(*) 学生数量, department_id_id 学院ID from student_student ss GROUP BY department_id_id;
 
         return HttpResponse('test')
     ```    
+
+
     
 
