@@ -658,11 +658,14 @@
         ```
         print(request.GET.get('a')) # 拿到一个值
         print(request.GET.getlist('a')) # 拿到一个集合
+        print(request.path)
+        print(request.method)
+        print(request.COOKIES)
         ```
 - 响应
     - `HttpResponse()`返回简单的字符串对象
-    - `render()`渲染模板
-    - `redirect()`重定向
+    - `render()` 渲染模板
+    - `redirect()` 重定向
     - `JsonResponse()`返回json数据
     - 头
         - `content` 返回的内容,字符串类型
@@ -673,7 +676,6 @@
         ```
         def test_json(request):
         a = request.GET.get('a')
-        print(a)
         if int(a) == 2:
             return JsonResponse({
                 'abc': 321
@@ -690,13 +692,147 @@
         if request.method == 'GET':
             return render(request, 'upload.html')
         elif request.method == 'POST':
-            f1 = request.FILES['file']
+            f1 = request.FILES['file'] # file是表单中的name值
             fs_name = os.path.join(MEDIA_ROOT, f1.name)
             with open(fs_name, 'wb') as f:
                 for c in f1.chunks():
                     f.write(c)
             return HttpResponse('数据存入成功')
 
-    ```
+    ``` 
     
+## cookie和session
+- cookie
+    ```
+    def set_ck(request):
+        response = HttpResponse('setcookie')
+        response.set_cookie('a', 1)
+        return response
 
+    def get_ck(request):
+        response = HttpResponse('getcookie')
+        cookie = request.COOKIES
+        print(cookie.get('a'))
+        return response
+
+    def del_ck(request):
+        response = HttpResponse('delCookie')
+        response.delete_cookie('a')
+        return response
+    ```
+
+- session
+    - 在settings的installed_apps默认启用
+    - 在django_session表中保存session信息
+    - 默认两个星期过期
+    - 保存登录状态
+        ```
+        # 主页
+        def home(request):
+            username = request.session.get('username')
+            return render(request, 'home.html', context={
+                'username': username
+            })
+
+
+        # 登录
+        def login(request):
+            if request.method == 'GET':
+                return render(request, 'login.html')
+            elif request.method == 'POST':
+                username = request.POST.get('username')
+                password = request.POST.get('password')
+
+                # 用session保存状态,存入django-session表中
+                # 把表中的sessionid存入客户端的cookie中
+                request.session['username'] = username
+                return redirect(reverse('home'))
+
+        # 退出
+        def logout(request):
+            request.session.flush()
+            return redirect(reverse('login'))
+        ```
+    - 注册登录
+        - 注册
+            - views
+                ```
+                from .forms import RegisterForm, LoginForm
+                from .models import UserModel
+                # 注册
+                def register(request):
+                    if request.method == 'GET':
+                        form = RegisterForm() # 实例化表单
+                        return render(request, 'register.html', context={
+                            'form': form
+                        })
+                    elif request.method == 'POST':
+                        form = RegisterForm(request.POST)
+                        # 如果form表单信息合法
+                        if form.is_valid():
+                            username = form.cleaned_data.get('username')
+                            password = form.cleaned_data.get('password')
+                            password_repeat = form.cleaned_data.get('password_repeat')
+                            email = form.cleaned_data.get('email')
+                            if password_repeat == password:
+                                UserModel.objects.get_or_create(username=username, password=password, email=email)
+                                return HttpResponse('注册成功')
+                            else:
+                                return HttpResponse('注册失败')
+                        else:
+                            print(form.errors)
+                            return HttpResponse('注册失败')
+                ```
+            - forms
+                ```
+                class RegisterForm(forms.Form):
+                    username = forms.CharField(
+                        max_length=10,
+                        min_length=4
+                    )
+                    password = forms.CharField(
+                        max_length=20,
+                        min_length=6,
+                        widget=forms.PasswordInput(
+                            attrs={'placeholder': '请输入密码'}
+                        )
+                    )
+                    password_repeat = forms.CharField(
+                        widget=forms.PasswordInput()
+                    )
+                    email = forms.EmailField()
+                ```
+
+        - 登录
+            - views
+                ```
+                def loginxx(request):
+                    if request.method == 'GET':
+                        form = LoginForm()
+                        return render(request, 'login1.html', context={
+                            'form': form
+                        })
+                    elif request.method == 'POST':
+                        form = LoginForm(request.POST)
+                        if form.is_valid():
+                            username = form.cleaned_data.get('username')
+                            password = form.cleaned_data.get('password')
+                            user = UserModel.objects.filter(username=username)
+                            if user:
+                                if password == user[0].password:
+                                    request.session['username'] = username
+                                    return redirect(reverse('home'))
+                                else:
+                                    return render(request, 'login1.html', context={
+                                        'form': form,
+                                        'error': form.errors
+                                    })
+                            else:
+                                return redirect(reverse('register'))
+                ```
+            - forms
+                ```
+                class LoginForm(forms.Form):
+                    username = forms.CharField(max_length=10, min_length=4)
+                    password = forms.CharField(max_length=20, min_length=6)
+                ```
