@@ -836,3 +836,79 @@
                     username = forms.CharField(max_length=10, min_length=4)
                     password = forms.CharField(max_length=20, min_length=6)
                 ```
+
+## 中间件
+- Django中间件是一个轻量级的插件系统,可以介入Django的请求和响应处理过程,修改Django的输入和输出
+- settings中的MIDDLEWARE_CLASSES
+
+<img src='./images/middleware.png' width='80%'>
+
+- 第一种方法
+    - 在主目录中创建mymiddleware
+        ```
+        from django.utils.deprecation import MiddlewareMixin
+
+        class MyException(MiddlewareMixin):
+            def process_exception(self, request, exception):
+                print('自定义异常')
+                return HttpResponse(exception)
+        ```
+    - 在MIDDLEWARE中注册
+        - `'test_project.mymiddleware.MyException'`
+
+- 第二种方法
+    - 主目录的mymiddleware中设置
+        ```
+        from test_project.register.models import user
+        class UserMiddleware:
+            def __init__(self, get_response):
+                self.get_response = get_response
+
+            def __call__(self, request):
+                # request到达view视图之前执行的语句
+                username = request.session.get('username', '未登录')
+                userinfo = user.objects.filter(username=username).first()
+                if userinfo:
+                    setattr(request, 'myuser', userinfo.username)
+                else:
+                    setattr(request, 'myuser', '未登录')
+
+                response = self.get_response(request)
+
+                # response到达用户浏览器之前执行的语句
+                return response
+        ```
+    - 在MIDDLEWARE中注册
+
+## 上下文处理器
+- 例如需要在每个视图中传递session信息
+- settings中的TEMPLATES保存着上下文处理器
+- 在主目录中设置mycontextprocess
+    ```
+    from test_project.register.models import user
+
+    def myuser(request):
+        username = request.session.get('username', '未登录')
+        userinfo = user.objects.filter(username=username).first()
+        if userinfo:
+            return {'myuser': userinfo.username}
+        else:
+            return {}
+    ```
+- 在TEMPLATES中注册
+
+
+## django admin系统
+- `python3 manage.py createsuperuser`
+- 在app的admin文件中
+    ```
+    from django.contrib import admin
+
+    from .models import Department, Student, Course, stu_detail
+
+    class dep_admin(admin.ModelAdmin):
+        list_display = ['d_id', 'd_name']
+        list_display_links = ['d_id', 'd_name']
+
+    admin.site.register(Department, dep_admin)
+    ```
