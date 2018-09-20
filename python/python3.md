@@ -912,3 +912,6 @@
 
     admin.site.register(Department, dep_admin)
     ```
+
+## auth系统
+- `auth`数据库中开头的表
