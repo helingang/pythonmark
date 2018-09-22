@@ -7,6 +7,7 @@
     1. [基础](./python/python1.md)
     2. [进阶](./python/python2.md)
     3. [框架Django](./python/python3.md)
+        - [Django案例1](./python/django1.md)
 3. [数据分析和入门](./python/data.md)
 
 # 算法
