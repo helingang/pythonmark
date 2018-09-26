@@ -4,9 +4,9 @@
 # python
 1. [计算机相关知识](./python/pc.md)
 2. python学习笔记
-    1. [基础](./python/python1.md)
-    2. [进阶](./python/python2.md)
-    3. [框架Django](./python/python3.md)
+    - [基础](./python/python1.md)
+    - [进阶](./python/python2.md)
+    - [框架Django](./python/python3.md)
         - [Django案例1](./python/django1.md)
 3. [数据分析和入门](./python/data.md)
 
@@ -19,3 +19,4 @@
 2. [JavaScript学习笔记](./html/js.md)
 3. Vue学习笔记
     - [Vue基础](./html/vue1.md)
+    - [vue-cli](./html/vue2.md)
