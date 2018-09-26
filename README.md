@@ -20,3 +20,4 @@
 3. Vue学习笔记
     - [Vue基础](./html/vue1.md)
     - [vue-cli](./html/vue2.md)
+    - [vue-router](./html/vue3.md)
