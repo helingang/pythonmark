@@ -132,4 +132,26 @@
         
     - `Hi.vue`
         - `{{ $route.params.user }}`
-- 
+
+
+## 创建同一页面的多路由
+- `App.vue`
+    ```
+    <h1>我是主页面</h1>
+    <router-view name="left"/>
+    <router-view name="right"/>
+    ```
+
+- `index.js`
+    ```
+    // 一个path下多组件
+    {
+        path: '/',
+        name: 'HelloWorld',
+        components: {
+            default: HelloWorld,
+            left: left,
+            right: right
+        }
+    }
+    ```
