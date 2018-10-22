@@ -63,3 +63,148 @@ class User(AbstractBaseUser, PermissionsMixin):
 ## 提示插件
 - `sweetalert`
 - `message.js`
+
+
+## csrf问题
+- 在form表单处添加`{% csrf_token %}`
+- 屏蔽中间件`'django.middleware.csrf.CsrfViewMiddleware'`,以不验证csrf
+- 添加装饰器
+    ```
+    from django.views.decorators.csrf import csrf_exempt, csrf_protect
+    # csrf_exempt : 不验证csrf
+    # csrf_protect : 验证csrf
+    from django.utils.decorators import method_decorator
+
+
+    # @csrf_exempt
+    # def login(request):
+    #     return render(request, 'account/login.html')
+    #
+    #
+    # def register(request):
+    #     return render(request, 'account/register.html')
+
+
+
+    # 类视图
+    from django.views import View
+
+    # django 推荐使用类视图
+    @method_decorator([csrf_exempt], name='dispatch') # 此视图不验证csrf
+    class LoginView(View):
+        def get(self, request, *args, **kwargs):
+            return render(request, 'account/login.html')
+
+        def post(self, request, *args, **kwargs):
+            form = LoginForm(request.POST)
+            if form.is_valid():
+                telephone = form.cleaned_data.get('telephone', None)
+                password = form.cleaned_data.get('password', None)
+                print(telephone, password)
+                return HttpResponse('通过')
+            else:
+                return HttpResponse('不通过')
+
+
+    class registerView(View):
+        def get(self, request):
+            return render(request, 'account/register.html')
+
+        def post(self):
+            pass
+
+    ```
+
+## 登录验证
+- js
+    ```
+    $(function () {
+        let $loginBtn = $('.login-btn');
+        let $telephone = $('input[name=telephone]');
+        let $password = $('input[name=password]');
+        let $remember = $('input[name=remember]');
+
+        function loginFn() {
+            // 前端做验证
+            telVal = $telephone.val();
+            pwdVal = $password.val();
+            if (telVal && pwdVal) {
+                $.ajax({
+                    url: '/account/login/',
+                    method: 'post',
+                    data: {
+                        'telephone': telVal,
+                        'password': pwdVal
+                    },
+                    dataType: 'json',
+                    success: res => {
+                        console.log('success', res);
+                        if (res['code'] === 1) {
+                            message.showSuccess(res['msg'])
+                        } else {
+                            message.showError(res['msg'])
+                        }
+                    },
+                    error: err => {
+                        console.log('error', err);
+                    }
+                })
+            } else {
+                window.message.showError('电话或密码不能为空')
+            }
+        }
+
+        $loginBtn.click(loginFn);
+
+        $(document).ready(
+            function () {
+                $(document).keydown(function (event) {
+                    if (event.keyCode === 13) {
+                        loginFn()
+                    }
+                })
+            }
+        );
+
+
+    });
+
+    ```
+
+- views
+    ```
+    # 类视图
+    from django.views import View
+
+    # django 推荐使用类视图
+    @method_decorator([csrf_exempt], name='dispatch') # 此视图不验证csrf
+    class LoginView(View):
+        def get(self, request, *args, **kwargs):
+            return render(request, 'account/login.html')
+
+        def post(self, request, *args, **kwargs):
+            form = LoginForm(request.POST)
+            if form.is_valid():
+                telephone = form.cleaned_data.get('telephone', None)
+                password = form.cleaned_data.get('password', None)
+                print(telephone, password)
+                user = authenticate(username=telephone, password=password)
+                if user:
+                    login(request, user)
+                    return JsonResponse({
+                        'code': 1,
+                        'msg': '登录成功'
+                    })
+                else:
+                    return JsonResponse({
+                        'code': 0,
+                        'msg': '手机号或密码错误'
+                    })
+            else:
+                print(form.errors)
+                return JsonResponse({
+                    'code': 0,
+                    'msg': '手机号或密码校验失败'
+                })
+
+    ```
