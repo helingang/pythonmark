@@ -254,12 +254,97 @@ querySelectorAll(); //获取的是类数组
     - Date对象间的运算
         - `var xd = new Date() - new Date(2030)`返回毫秒
 
-- 作用域
+## 作用域
     - 全局作用域,全局变量和全局函数可以通过window.形式访问
     - 局部作用局,只有内部可以访问,内部声明的变量会覆盖外部变量
 
-- JS代码解析
+## JS代码解析
+
     - 从上到下
     - 预解析
-        1. 寻找var变量以及函数声明(不会找函数表达式,相当于函数表达式也被赋值成undefined),变量会赋值成undefined,把整个函数声明拿到内存空间中
-        2. 
+        - 寻找var变量以及函数声明(不会找函数表达式,相当于函数表达式也被赋值成undefined),变量会赋值成undefined,把整个函数声明拿到内存空间中
+        - 同级作用域的定义过程中变量名与函数重名,保留函数
+        - 重名函数,保留后面的函数
+```
+alert(a);
+var a = 10;
+alert(a);
+function a(){alert(20);}
+alert(a);
+var a = 30;
+alert(a);
+function a(){alert(40);}
+alert(a);
+//function a(){alert(40);}    10   10   30  30  
+```
+```
+var a = 10;
+alert(a);
+a();
+function a(){alert(20);}
+//10 报错
+```
+```
+a();
+var a = function(){alert(1);};
+a();
+var a = function(){alert(2);};
+a();
+var a = function(){alert(3);};
+a();
+//报错
+```
+```
+if(!("a" in window)){
+    var a = 10;
+ }
+ console.log(a); 
+ //undefined
+ //定义阶段if true ,执行阶段if false
+```
+```
+var a = 10;
+x();
+function x(){var a= 20;y();}
+function y(){alert(a)};
+//10
+//函数的作用域,是看在哪里定义的,而不是在哪里执行的,y函数中的a无法访问x函数中的a,y函数中的a可以访问全局的a
+```
+
+## 闭包
+[学习Javascript闭包（Closure） - 阮一峰的网络日志](http://www.ruanyifeng.com/blog/2009/08/learning_javascript_closures.html)
+### 什么是闭包
+1. 外部函数函数内部嵌套内部函数(作用域的嵌套)
+2. 内部函数引用了外部函数中的参数或变量
+3. 内部函数中的变量,参数不会被垃圾回收机制回收(关闭浏览器才会回收)
+### 特性
+1. 全局变量不会被回收
+2. 绑定了事件的对象不会被回收(如果函数中使用this则会被回收,参见[02-解析顺序 闭包.wmv])
+### 用处
+1. 能够读取其他函数内部的变量
+2. 让这些变量的值始终保存在内存中
+```
+var a = 10;
+var b = fn();//和fn()()是两个不同的闭包
+b();//21
+b();//22
+fn()();//21 
+fn()();//21
+function fn(){
+    var a = 20;
+    return function(){
+        a++;
+        alert(a);
+    }
+}
+```
+```
+for(var i=0;i<aLi.length;i++){
+    !function(x){
+        aLi[x].onclick = function(){
+            alert(x);
+        }
+    }(i)
+}
+//保存了aLi长度个闭包,每个闭包中的i分别为1,2,3...
+```
