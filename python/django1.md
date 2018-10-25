@@ -115,7 +115,7 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     ```
 
-## 登录验证
+## 登录以及保持登录, 退出登录
 - js
     ```
     $(function () {
@@ -208,3 +208,60 @@ class User(AbstractBaseUser, PermissionsMixin):
                 })
 
     ```
+
+
+## 注册
+- [Memcached](https://memcached.org/)
+    - 免费的,开源的,高性能的,分布式内存对象的缓存系统(键/值字典),旨在通过减轻数据库负载加快动态Web应用程序的使用
+    - 缺点: 无持久化(数据在内存中);不能做大对象缓存(例如图片,音频)
+    - 可以用来做验证码
+    - 安装
+        - `sudo apt install memcached`
+        - `ps aux | grep memcached`
+    - 启动
+        ```
+        # 通过这种方式启动,最好通过这种方式关闭
+        sudo service memcached start
+        sudo service memcached stop
+        sudo service memcached restart
+
+        # 最好使用
+        memcached -d -p 11211 -l 0.0.0.0 -u root -m 64m -c 512 -P /var/run/memcached.pid
+        # -d 守护进程
+        # -p 端口(默认11211)
+        # -l host地址(默认127.0.0.1)
+        # -u 指定用户
+        # -m 表示指定占用的内存
+        # -c 连接数(默认1024)
+        # -P 设置保存Memcached的Pid文件
+        ```
+    - 连接
+        - `telnet ip 11211`
+    - 操作
+        - `set`设置一个key
+            ```
+            set key flags(0) exptime bytes
+            value
+            # key: key的名字
+            # flags: 16位的无符号整数 一般写0
+            # exptime: 过期时间
+            # bytes: 存储的字节
+            示例:
+            set captcha 0 60 4
+            tzxw
+            成功返回STORED
+            失败返回ERROR
+            ```
+
+        - `get`获取
+            - 如果不存在,返回空
+            - `get key`
+        - `delete`删除
+            - 删除已经存在的key, 存在则返回NOT_FOUND
+            - `delete key`
+            - `flush_all`删除所有数据
+            - `stats`查看状态
+    
+    - Python操作
+        - 使用`python-memcached`的包
+    
