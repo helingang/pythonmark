@@ -13,10 +13,13 @@
     - `manage.py`django的一个命令行工具,管理django项目
     - `__init__.py`空文件,告诉python这个目录是一个python包
     - `setting.py`配置文件,包含数据库信息,调试标志,静态文件等
-    - `urls.py`Django项目的URL申明
+    - `urls.py`Django项目的URL路由申明
     - `wsgi.py`部署时用到的
 
 - `django-admin startapp name`创建app
+
+## 启动项目
+- 项目根目录下`python3 manage.py runserver 0.0.0.0:8000`
 
 ## 基础知识
 - path规则
