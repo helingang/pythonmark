@@ -244,7 +244,7 @@ class User(AbstractBaseUser, PermissionsMixin):
             value
             # key: key的名字
             # flags: 16位的无符号整数 一般写0
-            # exptime: 过期时间
+            # exptime: 过期时间(秒)
             # bytes: 存储的字节
             示例:
             set captcha 0 60 4
@@ -253,15 +253,30 @@ class User(AbstractBaseUser, PermissionsMixin):
             失败返回ERROR
             ```
 
+        - `add`添加
+            ```
+            add name 0 60 3
+            qwe
+            # 如果name存在则返回 NOT_STORED
+            ```
+        - `add`和`set`的区别
+            - `set`如果要设置的key已经存在,再次设置则是覆盖
+            - `add`如果存在会返回`NOT_STORED`,不存在则添加
+
         - `get`获取
             - 如果不存在,返回空
             - `get key`
         - `delete`删除
-            - 删除已经存在的key, 存在则返回NOT_FOUND
+            - 删除已经存在的key, 不存在则返回NOT_FOUND
             - `delete key`
             - `flush_all`删除所有数据
             - `stats`查看状态
     
     - Python操作
         - 使用`python-memcached`的包
+            - `pip install`
+        - python代码
+            ```
+            import
+            ```
     
