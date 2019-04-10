@@ -17,9 +17,13 @@
     - `wsgi.py`部署时用到的
 
 - `django-admin startapp name`创建app
+- `python manage.py startapp name`创建app
 
 ## 启动项目
 - 项目根目录下`python3 manage.py runserver 0.0.0.0:8000`
+- pycharm配置
+
+    <img src='./images/pycharmdjango.png' width='80%'>
 
 ## 基础知识
 - path规则
