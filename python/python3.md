@@ -26,18 +26,39 @@
     <img src='./images/pycharmdjango.png' width='80%'>
 
 ## 基础知识
+### url和view视图
+- 顺序
+    1. 先到项目目录下的urls.py(根URLconf),查找路由规则
+    2. 根URLconf定义了urlpatterns变量
+    3. urlpatterns是一个(django.urls.path django.urls.re_path 对象)列表    
+    4. 按顺序运行每一个url模式,在第一个匹配的模式停止
+    5. 一旦匹配,django导入并调用给定的视图
+    6. 如果没匹配到返回404
 - path规则
-    - `path('test/<xx>/',views.test)`
-    - 转换器
-        - `str`除了/的非空字符串
-        - `int`正整数包含0
-        - `slug`字符串包含字母数字横杠和下划线
-        - `uuid`
-    - 参数`xx`与视图中的形参必须一致
+    - `path(route, view, kwargs, name)`
+        1. 参数
+            - route: 字符串的**url规则**
+            - view: 视图
+            - kwargs: 传递给view,是个字典
+            - name: 是个命名
+        2. 传递额外参数
+            1. 在path和re_path中传递kwargs的字典参数
+            2. `path('detail/<int:pk>/', views.detail, kwargs={'status': True}, name='detail'),`status的优先级大于pk
+    - 在url中捕获参数
+        1. 在**url规则**中使用`<变量名>`来捕获url中的值传递给视图
+    - 路径转换器
+        1. `path('<int:pk>/', views.detail, name='detail'),`检查pk是int类型
+            - str 除了/的非空字符串
+            - int 正整数包含0
+            - slug 字符串包含字母数字横杠和下划线
+            - uuid 格式化的id
+            - path 匹配任意非空字符
 - re_path规则
     - `re_path('^hello/$',views.test5)`
     - `re_path('^hello/(?P<yy>[0-9]+)/',views.test6)`
-
+    - `(?P<name>pattern)`带参数的正则
+        - P是分组名称,name是参数名称,pattern是正则表达式
+    - 不带参数的正则按位置传参
 - path中的参数需要在视图中接收(视图中可以使用`**kwargs`)
 
 - `include`
@@ -47,14 +68,22 @@
     - 在path中设置路由的名称`path('xx', views.test, name='t1')`
     - 在视图中`return redirect(reverse('t1'))`
 
-- 展示html
-    1. 在根目录设置`templates`
-        - 设置`settings`文件中的`TEMPLATES`的`DIRS`属性
-
-    2. 或者在app目录中设置`templates`
-        - 在`settings`中注册`INSTALLED_APPS`
-        - 保证`settings`中`TEMPLATES`的`APP_DIRS`为`True`
+### 模板系统
+- 模板路径
+    1. `settings`的`TEMPLATES`中添加`'DIRS': [os.path.join(BASE_DIR, 'templates')],`
+    2. 先在`settings`的`TEMPLATES`中查找模板路径,然后在`INSTALLED_APPS`中查找注册的app的目录下有没有`templates`文件夹
     3. 在视图中`render(request, 'book/index.html')`
+    4. 集中存放模板文件是方便管理,分开存放模板是为了app能够更方便的复用
+- 模板变量
+    1. 变量的值可以是任何数据类型
+    2. 变量的解析规则
+        1. 计算变量将其替换成结果
+        2. 遇到点`.`的时候按以下顺序查找
+            - 字典键值查找
+            - 属性或方法查找
+            - 数字索引查找
+        3. 如果结果是可调用的,则调用它时不带参数
+        4. 渲染失败返回''
 
 - 在视图中传递数据,并在html中展示
     - 传递数据
@@ -155,7 +184,7 @@
                 {% endfor %}
             {% endfor %}
             ```
-    - `for in empty`
+    - `for in empty`如果没有数据就跳到empty中
         - 例子
             ```
             {% for i in l1 %}
