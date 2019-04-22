@@ -4,7 +4,14 @@
 3. PyPy: Python语言写的Python解释器,JIT(just in time)技术,**动态**编译Python代码
 4. Jython: Python的源代码编译成Java的字节码,跑在JVM(java 虚拟机)上
 5. IronPython: 与Jython类似,运行在.Net平台上的解释器,Python代码被编译成.Net字节码
-
+# 简介
+1. 原码目录
+    - Include:这个目录包括了 Python 的所有头文件。
+    - Lib：这里是 Python 标准库，都是用 Python 实现的。
+    - Modules：用 C 语言编写的模块，比如 cStringIO / tkinter 高性能实现
+    - Objects：Python 内建对象，如 int / list 的实现
+    - Parser：Python 解释器的 Scanner 和 Parser
+    - Python：Python 解释器的 Compiler 和执行引擎，运行核心
 # 基础知识
 ## 数据类型
 ### 数字

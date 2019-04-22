@@ -1,4 +1,4 @@
-记录学习python过程中遇问题与知识点
+记录学习过程中遇问题与知识点
 ====
 
 # python
@@ -9,6 +9,8 @@
     - [框架Django](./python/python3.md)
         - [Django案例1](./python/django1.md)
 3. [数据分析和入门](./python/data.md)
+# ai
+1. [jupyter](./ai/jupyter.md)
 
 # 算法
 ## 排序
@@ -20,4 +22,4 @@
 3. Vue学习笔记
     - [Vue基础](./html/vue1.md)
     - [vue-cli](./html/vue2.md)
-    - [vue-router](./html/vue3.md)
+    - [vue-router](./html/vue3.md) 
