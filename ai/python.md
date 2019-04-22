@@ -31,3 +31,6 @@
     b,=l1
     print(a,b)
     ```
+5. `globles()['name'] = 'Sam'` 直接命名法(globles()是个字典)
+6. `dir(__builtins__)`内置电池:常用的`str len`都在里面
+7. 先从`locals()`中寻找,再从`globles()`中,最后从`__builtins__`中寻找

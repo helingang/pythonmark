@@ -11,13 +11,13 @@
 3. [数据分析和入门](./python/data.md)
 
 # AI
-## 基础
-1. [jupyter](./ai/jupyter.md)
-2. [Python相关](./ai/python.md)
+1. 基础
+    1. [jupyter](./ai/jupyter.md)
+    2. [Python相关](./ai/python.md)
 
 # 算法
-## 排序
-- [几种排序方法](./sort/sort.md)
+1. 排序
+    - [几种排序方法](./sort/sort.md)
 
 # 前端
 1. [html+css的学习笔记](./html/html.md)
