@@ -1,282 +1,953 @@
-# 项目1
-## 环境
-- `virtualenv --no-site-packages venv`
-- `source venv/bin/activate`
-- `deactivate`退出
-
-## 初始化项目
-- 注册`INSTALLED_APPS`
-- `TEMPLATES`目录配置`DIRS`文件路径
-- `DATABASES`配置数据库信息
-- 设置语言和时区
-- 配置静态文件地址`STATICFILES_DIRS`
-- 设置`templates`模板的`extend`继承
+# Django
+## 虚拟环境
+- `workon`查看虚拟环境
+- `mkvirtualenv -p /usr/bin/python3 name`在python3版本下创建虚拟环境
+- `workon name`进入虚拟环境
+- `deactivate`退出虚拟环境
+- `rmvirtualenv name`删除虚拟环境
 
 
-## account的模型
-```
-class UserManager(BaseUserManager):
+## 项目初始化
+- `django-admin startproject name`在当前目录新建项目
+- 目录
+    - `manage.py`django的一个命令行工具,管理django项目
+    - `__init__.py`空文件,告诉python这个目录是一个python包
+    - `setting.py`配置文件,包含数据库信息,调试标志,静态文件等
+    - `urls.py`Django项目的URL路由申明
+    - `wsgi.py`部署时用到的
 
-    # 创建用户
-    def _create_user(self, username, telephone, password, **extra_fields):
-        user = self.model(username=username, telephone=telephone, **extra_fields)
-        # 也可以在参数中添加password: password=make_password(password)
-        user.set_password(password)
-        user.save(using=self._db)
-        return user
+- `django-admin startapp name`创建app
+- `python manage.py startapp name`创建app
 
-    def create_user(self, username, telephone=None, password=None, **extra_fields):
-        extra_fields['is_superuser'] = False
-        extra_fields['is_staff'] = False
+## 启动项目
+- 项目根目录下`python3 manage.py runserver 0.0.0.0:8000`
+- pycharm配置
 
-        return self._create_user(username, telephone, password, **extra_fields)
+    <img src='./images/pycharmdjango.png' width='80%'>
 
-    def create_superuser(self, username, telephone, password, **extra_fields):
-        extra_fields['is_superuser'] = True
-        extra_fields['is_staff'] = True
-        print(extra_fields)
+## 基础知识
+### url和view视图
+- 顺序
+    1. 先到项目目录下的urls.py(根URLconf),查找路由规则
+    2. 根URLconf定义了urlpatterns变量
+    3. urlpatterns是一个(django.urls.path django.urls.re_path 对象)列表    
+    4. 按顺序运行每一个url模式,在第一个匹配的模式停止
+    5. 一旦匹配,django导入并调用给定的视图
+    6. 如果没匹配到返回404
+- path规则
+    - `path(route, view, kwargs, name)`
+        1. 参数
+            - route: 字符串的**url规则**
+            - view: 视图
+            - kwargs: 传递给view,是个字典
+            - name: 是个命名
+        2. 传递额外参数
+            1. 在path和re_path中传递kwargs的字典参数
+            2. `path('detail/<int:pk>/', views.detail, kwargs={'status': True}, name='detail'),`status的优先级大于pk
+    - 在url中捕获参数
+        1. 在**url规则**中使用`<变量名>`来捕获url中的值传递给视图
+    - 路径转换器
+        1. `path('<int:pk>/', views.detail, name='detail'),`检查pk是int类型
+            - str 除了/的非空字符串
+            - int 正整数包含0
+            - slug 字符串包含字母数字横杠和下划线
+            - uuid 格式化的id
+            - path 匹配任意非空字符
+- re_path规则
+    - `re_path('^hello/$',views.test5)`
+    - `re_path('^hello/(?P<yy>[0-9]+)/',views.test6)`
+    - `(?P<name>pattern)`带参数的正则
+        - P是分组名称,name是参数名称,pattern是正则表达式
+    - 不带参数的正则按位置传参
+- path中的参数需要在视图中接收(视图中可以使用`**kwargs`)
 
-        return self._create_user(username, telephone, password, **extra_fields)
+- `include`
+    - 在主`urls`中设置`path('book/',include('book.urls'))`
 
-class User(AbstractBaseUser, PermissionsMixin):
-    '''
-    User
-    '''
-    telephone = models.CharField(max_length=11, unique=True)
-    username = models.CharField(max_length=50)
-    email = models.EmailField(blank=True)
-    # password = set_password()
-    is_active = models.BooleanField(default=True) # 账户是否可用
-    create_time = models.DateTimeField(auto_now_add=True)
-    update_time = models.DateTimeField(auto_now=True)
-    is_staff = models.BooleanField(blank=True)
+- 重定向
+    - 在path中设置路由的名称`path('xx', views.test, name='t1')`
+    - 在视图中`return redirect(reverse('t1'))`
 
-    objects = UserManager()
+### 模板系统
+- 模板路径
+    1. `settings`的`TEMPLATES`中添加`'DIRS': [os.path.join(BASE_DIR, 'templates')],`
+    2. 先在`settings`的`TEMPLATES`中查找模板路径,然后在`INSTALLED_APPS`中查找注册的app的目录下有没有`templates`文件夹
+    3. 在视图中`render(request, 'book/index.html')`
+    4. 集中存放模板文件是方便管理,分开存放模板是为了app能够更方便的复用
+- 模板变量
+    1. 变量的值可以是任何数据类型
+    2. 变量的解析规则
+        1. 计算变量将其替换成结果
+        2. 遇到点`.`的时候按以下顺序查找
+            - 字典键值查找
+            - 属性或方法查找
+            - 数字索引查找
+        3. 如果结果是可调用的,则调用它时不带参数
+        4. 渲染失败返回''
 
-    EMAIL_FIELD = 'email'
-    USERNAME_FIELD = 'telephone' # 1
-    REQUIRED_FIELDS = ['username', 'email'] # 2, 3
-    # 4 password
-    # createsuperuser的时候字段输入的顺序是 telephone, username, email, password
-```
+- 在视图中传递数据,并在html中展示
+    - 传递数据
+        ```
+        def test1(request):
+            return render(request, 'index_test.html',
+                        context={
+                            'name': 'Sam',
+                        })
+        ```
+    - 展示数据,
+    - 注意:函数默认执行并去返回值.过滤器(常用过滤器和时间过滤器)
+        ```
+        <h2>字典 {{ dict.name }} 今年 {{ dict.age }} 岁了</h2>
+        <h2>字典 {{ dict.items }}</h2>
+        <h2>函数 {{ fun }}</h2>
+        <h2>列表 {{ list1.1 }}</h2>
+        <h2>类的方法 {{ fsay }}</h2>
+        <h2>元祖 {{ tp.2 }}</h2>
 
-## 提示插件
-- `sweetalert`
-- `message.js`
+        <h1>{{ name | upper | title }}</h1>
+        <h1>{{ num1 | add:num2 }}</h1>
+        <h1>{{ dsadad | default:333 }}</h1>
+        <h1>{{ list1 | first }}</h1>
+        <h1>{{ name | join:dict.age }}</h1> <!-- 拼接 -->
+        <h1>{{ list1 | length_is:1 }}</h1>
+        <h1>{{ str | truncatechars:5 }}</h1> <!-- 字符串截断 -->
+        <h1>{{ str | truncatewords:2 }}</h1> <!-- 单词截断 -->
+        <h1>{{ html | truncatechars_html:4 }}</h1>
+        <h1>{{ str | slice:'1:3' }}</h1> <!-- 切片 -->
+        <h1>{{ html | striptags }}</h1>
+        <h1>{{ html }}</h1>
+        {{ html | safe }} <!-- 使字符串中的标签生效 -->
+        <h1>{{ float | floatformat:2 }}</h1>
+        <a href="/">123</a>
+        <h1>{{ time }}</h1>
+        <h1 id="a1">{{ time | date:'Y/m/d H:i:s' }}</h1>
+        ```
+
+- 常用标签
+    - `if`标签
+        - 语句`if/elif/else/endif/ifequal/ifnotequal`,可以使用`and/or/not/in/<`等运算符
+        - 例子
+            ```
+            {% if name == 'py1' and l2.0 == 11 %}
+                py1
+            {% elif name == 'py12' or l2.0 == 10 %}
+                py
+            {% endif %}
+
+            {% ifequal name 'py1' %}
+                <br>
+                满足ifequal
+            {% endifequal %}
+
+            {% ifnotequal name 'py2' %}
+                <br>
+                满足ifnotequal
+            {% endifnotequal %}
+            ```
+    - `for`标签
+        - 语句`for in`
+        - `forloop.counter0`当前迭代的次数,下标从0开始(相反于revcounter0)
+        - `forloop.counter`当前迭代的次数,下标从1开始(相反于revcounter)
+        - `forloop.first`返回布尔值,第一次迭代返回True
+        - `forloop.last`
+        - `forloop.parentloop`表示上一层循环
+        - 例子
+            ```
+            {% for i in l2 %}
+                {% if forloop.counter0 > 0 %} <!-- 下标>0 -->
+                    <br>
+                    <a href="">{{ i }}</a>
+                {% else %}
+                    <br>
+                    {{ i | add:5 }}
+                {% endif %}
+            {% endfor %}
+            <br><br>
+            {% for i in l2 %}
+                {% if forloop.last %} <!-- 最后一次迭代 -->
+                    <br>
+                    <a href="">{{ i }}</a>
+                {% else %}
+                    <br>
+                    {{ i | add:5 }}
+                {% endif %}
+            {% endfor %}
+
+            {% for i in l2 %}
+                {% for j in name %}
+                    {% for k in test %}
+                        <br>
+                        外层i的值是: {{ forloop.parentloop.parentloop.counter0 }}
+                        中层j的值是: {{ forloop.parentloop.counter0 }}
+                        内层k的值是: {{ forloop.counter0 }}
+                    {% endfor %}
+                {% endfor %}
+            {% endfor %}
+            ```
+    - `for in empty`如果没有数据就跳到empty中
+        - 例子
+            ```
+            {% for i in l1 %}
+                    {{ i }}
+                {% empty %}
+                    empty
+            {% endfor %}
+
+            ```
+
+    - `url`命令路径
+        - 在`urls`中设置路由的名称`path('test5/<p1>', views.test5, name='path_test5')`
+        - 在html文件中设置路径`<a href="{% url 'path_test5' name %}">进入test5视图</a>`
+
+    - 在html中使用`with`缓存变量
+        - 例子
+            ```
+            {% with name as n %}
+                1111{{ n }}
+                2222{{ name }}
+            {% endwith %}
+                3333{{ n }}
+                4444{{ name }}
+            ```
+    
+    - 关闭自动转义
+        ```
+        {{ html }}
+        {{ html | safe }}
+        {% autoescape off %}
+            {{ html }}
+        {% endautoescape %}
+        ```
+
+    - 注释(如果使用`<!-- -->`则查看源代码可以看到)
+        ```
+        {# 2 #}
+        {% comment %}
+            123
+        {% endcomment %}
+        ```
+
+    - 继承与引用
+        - 创建`base`页面
+            ```
+            <!DOCTYPE html>
+            <html lang="en">
+            <head>
+                <meta charset="UTF-8">
+                <title>{% block title %}base页面{% endblock %}</title>
+            </head>
+            <body>
+                {% block content %}
+                <h1>我是base页面</h1>
+                {% endblock %}
+
+                {% block content1 %}
+                {% endblock %}
+            </body>
+            </html>
+            ```
+        - 创建继承和引用的页面
+            - 注意
+                1. 模板继承使用extends标签实现。通过使用block来给子模板开放接口
+                2. extends必须是模板中的第一个出现的标签
+                3. 子模板中的所有内容，必须出现在父模板定义好的block中，否则django将不会渲染
+                4. 如果出现重复代码，就应该考虑使用模板
+                5. 尽可能多的定义block，方便子模板实现更细的需求
+                6. 如果在某个block中，要使用父模板的内容，使用block.super获取
+            
+            - 例子
+                ```
+                {% extends 'test_parent.html' %}
+
+                {% block title %}
+                    自定义的title内容
+                {% endblock %}
+
+                {% block content %}
+                    通过super继承父类的内容: {{ block.super }}
+                    <br>
+                    自己创建的内容
+                {% endblock %}
 
 
-## csrf问题
-- 在form表单处添加`{% csrf_token %}`
-- 屏蔽中间件`'django.middleware.csrf.CsrfViewMiddleware'`,以不验证csrf
-- 添加装饰器
+                {% block content1 %}
+                    {% include 'test_incloud.html' %} {# 引用目标文件body中的内容 #}
+                {% endblock %}
+                ```
+        - 设置静态文件
+            - 创建静态文件
+                - 在app中创建static文件夹
+                - 或者在根目录创建static文件夹
+            - 在`settings`中设置路径和注册
+                ```
+                STATIC_URL = '/static/'
+
+                STATICFILES_DIRS = [
+                    os.path.join(BASE_DIR, 'static')
+                ]
+
+                INSTALLED_APPS = [
+                    'django.contrib.admin',
+                    'django.contrib.auth',
+                    'django.contrib.contenttypes',
+                    'django.contrib.sessions',
+                    'django.contrib.messages',
+                    'django.contrib.staticfiles',
+                    'book',
+                ]
+                ```
+            - 在html文件中引用静态文件
+                ```
+                {% load static %}
+                <!DOCTYPE html>
+                <html lang="en">
+                <head>
+                    <meta charset="UTF-8">
+                    <title>Title</title>
+                    <link rel="stylesheet" href="{% static 'css/index2.css' %}">
+                </head>
+                <body>
+                <img src="{% static 'images/14.png' %}" alt="123" width="" height="" title="321">
+                </body>
+                    <script src="{% static 'js/index.js' %}"></script>
+                </html>
+                ```
+
+- 自定义过滤器
+    - 目录`common/templatetags`下存放`common_extra.py`文件
+    - 在`INSTALLED_APPS`中注册`common`,可以把common看成一个app
+    - `common_extra.py`
+        ```
+        from django import template
+
+        register = template.Library()
+
+        @register.filter # 装饰器注册自定义过滤器1
+        def myLower(str):
+            return str.lower()
+
+        @register.filter
+        def myUpper(str):
+            return str.upper()
+
+        # register.filter(myLower) # 注册自定义过滤器2
+        ```
+    - `html`文件
+        ```
+        {% load common_extras %} {# 加载自定义py文件 #}
+        <!DOCTYPE html>
+        <html lang="en">
+        <head>
+            <meta charset="UTF-8">
+            <title>自定义过滤器</title>
+        </head>
+        <body>
+            内置的过滤器: {{ str | lower }}
+            <br>
+            自定义的过滤器: {{ str | myLower }}
+            <br>
+            自定义的过滤器: {{ str | myUpper | cut:' ' | slice:'1:5'}}
+        </body>
+        </html>
+        ```
+
+- 自定义模板标签
+    1. 简单标签
+        - `customer_tags.py`中
+            ```
+            @register.simple_tag(name='MyCurrent', takes_context=True)
+            def current_time(context):
+                print(context['fs']) # context指的是view中context的变量
+                return datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+            ```
+        - `views`中
+            ```
+            def index(request):
+            students = [
+                {'id': 10, 'name': '小明', 'age': 20, 'sex': 1},
+                {'id': 15, 'name': '小李', 'age': 21, 'sex': 0},
+                {'id': 21, 'name': '小方', 'age': 13, 'sex': 1},
+                {'id': 23, 'name': '小红', 'age': 16, 'sex': 1},
+            ]
+            fs = '123'
+            return render(request, 'student/index.html', context={
+                'students': students,
+                'fs': fs
+            })
+            ```
+        - `html`中
+            ```
+            <li><a href="#">当前时间{% MyCurrent %}</a></li>
+            ```
+
+    2. 包含标签
+        - `customer_tags.py`中
+            ```
+            @register.inclusion_tag(name='MyInclude', filename='student/show_list_as_ul.html')
+            def show_list_as_ul(value):
+                return {'ls': value}
+            ```
+        - 自定义`html`中
+            ```
+            <ul>
+                {% for v in ls %}
+                    <li>第{{ forloop.counter }}行的数据是{{ v }}</li>
+                {% endfor %}
+            </ul>
+            ```
+        - `view.py`视图中
+            ```
+            return render(request, 'student/index.html', context={
+                'students': students,
+                'fs': fs,
+                'include_tag': ['js', 'java', 'python']
+            })
+            ```
+        - `index.html`中
+            ```
+            {% MyInclude include_tag %}
+            ```
+
+## 模型基础
+- ORM概念
+    - 对象关系映射
+    - ORM的优势:不用直接编写SQL代码,只需要操作对象一样操作数据
+    - 一个数据表对应一个模型类,表中的字段对应类属性
+
+- 配置数据库连接`settings.py`并注册app
     ```
-    from django.views.decorators.csrf import csrf_exempt, csrf_protect
-    # csrf_exempt : 不验证csrf
-    # csrf_protect : 验证csrf
-    from django.utils.decorators import method_decorator
-
-
-    # @csrf_exempt
-    # def login(request):
-    #     return render(request, 'account/login.html')
-    #
-    #
-    # def register(request):
-    #     return render(request, 'account/register.html')
-
-
-
-    # 类视图
-    from django.views import View
-
-    # django 推荐使用类视图
-    @method_decorator([csrf_exempt], name='dispatch') # 此视图不验证csrf
-    class LoginView(View):
-        def get(self, request, *args, **kwargs):
-            return render(request, 'account/login.html')
-
-        def post(self, request, *args, **kwargs):
-            form = LoginForm(request.POST)
-            if form.is_valid():
-                telephone = form.cleaned_data.get('telephone', None)
-                password = form.cleaned_data.get('password', None)
-                print(telephone, password)
-                return HttpResponse('通过')
-            else:
-                return HttpResponse('不通过')
-
-
-    class registerView(View):
-        def get(self, request):
-            return render(request, 'account/register.html')
-
-        def post(self):
-            pass
-
-    ```
-
-## 登录以及保持登录, 退出登录
-- js
-    ```
-    $(function () {
-        let $loginBtn = $('.login-btn');
-        let $telephone = $('input[name=telephone]');
-        let $password = $('input[name=password]');
-        let $remember = $('input[name=remember]');
-
-        function loginFn() {
-            // 前端做验证
-            telVal = $telephone.val();
-            pwdVal = $password.val();
-            if (telVal && pwdVal) {
-                $.ajax({
-                    url: '/account/login/',
-                    method: 'post',
-                    data: {
-                        'telephone': telVal,
-                        'password': pwdVal
-                    },
-                    dataType: 'json',
-                    success: res => {
-                        console.log('success', res);
-                        if (res['code'] === 1) {
-                            message.showSuccess(res['msg'])
-                        } else {
-                            message.showError(res['msg'])
-                        }
-                    },
-                    error: err => {
-                        console.log('error', err);
-                    }
-                })
-            } else {
-                window.message.showError('电话或密码不能为空')
-            }
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.mysql',
+            'NAME': 'mydb', # 数据库的名称
+            'USER': 'admin',
+            'PASSWORD': 'sa',
+            'HOST': '132.232.110.71',
+            'PORT': '3306'
         }
-
-        $loginBtn.click(loginFn);
-
-        $(document).ready(
-            function () {
-                $(document).keydown(function (event) {
-                    if (event.keyCode === 13) {
-                        loginFn()
-                    }
-                })
-            }
-        );
-
-
-    });
-
+    }
     ```
 
-- views
+- 项目目录的`__init__`文件
     ```
-    # 类视图
-    from django.views import View
+    import pymysql
+    pymysql.install_as_MySQLdb()
+    ```
 
-    # django 推荐使用类视图
-    @method_decorator([csrf_exempt], name='dispatch') # 此视图不验证csrf
-    class LoginView(View):
-        def get(self, request, *args, **kwargs):
-            return render(request, 'account/login.html')
+- 创建模块`models`
+    ```
+    # movie_user表示一张表
+    class User(models.Model):
+        id = models.AutoField(primary_key=True) # 自增长主键
+        name = models.CharField(max_length=30)
+        age = models.IntegerField()
+        # 新增字段
+        city = models.CharField(max_length=50, default='')
+    ```
 
-        def post(self, request, *args, **kwargs):
-            form = LoginForm(request.POST)
-            if form.is_valid():
-                telephone = form.cleaned_data.get('telephone', None)
-                password = form.cleaned_data.get('password', None)
-                print(telephone, password)
-                user = authenticate(username=telephone, password=password)
-                if user:
-                    login(request, user)
-                    return JsonResponse({
-                        'code': 1,
-                        'msg': '登录成功'
-                    })
+- 创建映射文件
+    - `python manage.py makemigrations`
+
+- 将映射文件中的数据提交到数据库中
+    - `python manage.py migrate`
+
+- 多种方式添加数据并保存
+    ```
+    def add_user(request):
+        # 方法一
+        # user = User(name='sam', age=18, sex=1)
+        # user.save()
+
+        # 方法二
+        # user = User()
+        # user.name = 'Jack'
+        # user.age = 20
+        # user.sex = 0
+        # user.save()
+
+        # 方法三
+        # User.objects.create(name='Ros', age=22, sex=1)
+
+        # 方法四
+        User.objects.get_or_create(name='Mar', age=24, sex=0) # 不会重复创建
+
+        return HttpResponse('插入数据')
+    ```
+
+- 查询数据
+    ```
+    def search_user(request):
+        # QuerySet: 支持切片,不支持负索引
+
+        # .all返回QuerySet对象(数据库查询的集合)
+        # result = User.objects.all()
+        # print(result)
+        # print(result[:2])
+
+        # .get加条件只能返回一个实例对象(条件对应的结果必须唯一)
+        # result = User.objects.get(name__contains='M')
+        # print(result)
+
+        # .filter加条件查询,返回QuerySet类型
+        result = User.objects.filter(id__gte=3)
+        print(result[0])
+
+        # 常用的查询方法
+        rs = User.objects.all()
+        rs = User.objects.first() # 实例对象
+        rs = User.objects.last() # 实例对象
+        rs = User.objects.filter(name='sam') # 返回QuerySet
+        rs = User.objects.exclude(name='sam') # 反向查询
+        rs = User.objects.get(name='sam') # 获取唯一的一条数据
+        rs = User.objects.order_by('-age') # 逆向排序
+        rs = User.objects.order_by('age', 'id') # 多项排序
+        rs = User.objects.all().values() # 将QuerySet转换成字典
+        rs = User.objects.count()
+
+        return HttpResponse(result)
+    ```
+
+- 更新数据
+    ```
+    def update_user(request):
+        # rs = User.objects.get(id=6)
+        # rs.age += 1
+        # rs.save()
+
+        # rs = User.objects.filter(id=6)
+        # print(rs)
+        # rs.update(age=26) # 如何age+=1
+
+        # rs = User.objects.all()
+        # rs.update(city='cd')
+
+
+        return HttpResponse('修改数据')
+    ```
+
+- 删除数据
+    ```
+    def del_user(request):
+        # 实例对象的删除
+        # rs = User.objects.get(id=6)
+        # rs.delete()
+
+        # QuerySet对象的删除
+        # rs = User.objects.filter(id=7)
+        # rs.delete()
+        # User.objects.all().delete()
+
+        return HttpResponse('删除数据')
+    ```
+
+- 删除表
+    - 注释`models.py`文件中的类(即表)
+    - 执行`makemigration`和`migrate`
+
+- 常见的查询条件
+    - `exact`等于
+    - `iexact`忽略大小写的等于
+    - `contains`包含
+    - `icontains`忽略大小写的包含
+    - `startwith`以什么开始
+    - `istartwith`忽略大小写 以什么开始
+    - `endswith`
+    - `iendswith`
+    - `in`
+        - `.filter(age__in=[20,21,22])`
+    - `gt`大于
+    - `gte`大于等于
+    - `lt`小于
+    - `lte`小于等于
+    - `range`区间
+    - `isnull`判断是否为空
+
+- 常用字段和参数
+    - 字段
+        - id(默认) -> AutoField
+        - varchar -> CharField
+        - int -> IntegerField
+        - longtext -> TextField
+        - date -> DateField 日期
+        - datedatetime -> DateTimeField 日期时间
+        - tinyint -> BooleanField
+    - 参数
+        - primary_key
+        - max_length
+        - unique
+        - null
+        - blank 为True时form表单验证时可以为空,默认为False
+        - default
+        - auto_now 类似于updateTime,注意:update方法不能更新时间,需要用save方法
+        - auto_now_add 类似于createTime
+
+- 表关系创建
+    - 一对多 -> 外键 -> ForeignKeyField
+    - 一对一 -> 外键+唯一键 -> OneToOneField
+    - 多对多 -> 关联表:外键+联合唯一 -> ManyToManyField
+    - 参数
+        - 级联删除`on_delete=models.CASCADE`表示如果主表中Department中学院被删除,则这个外键表中的数据也要同时被删除
+    - 例子
+        ```
+        class Department(models.Model):
+            d_id = models.AutoField(primary_key=True)
+            d_name = models.CharField(max_length=30)
+            create_time = models.DateTimeField(auto_now_add=True)
+            update_time = models.DateTimeField(auto_now=True)
+
+        class Student(models.Model):
+            s_id = models.AutoField(primary_key=True)
+            s_name = models.CharField(max_length=30)
+            department_id = models.ForeignKey('Department', on_delete=models.CASCADE) # 级联删除: on_delete=models.CASCADE 表示如果主表中Department中学院被删除,则这个外键表中的数据也要同时被删除
+            create_time = models.DateTimeField(auto_now_add=True)
+            update_time = models.DateTimeField(auto_now=True)
+
+        class Course(models.Model):
+            c_id = models.AutoField(primary_key=True)
+            c_name = models.CharField(max_length=30)
+            student = models.ManyToManyField('Student') # 这一行会生成一个表,course-student
+
+        class stu_detail(models.Model):
+            s_id = models.OneToOneField('Student', on_delete=models.CASCADE)
+            age = models.IntegerField()
+            gender = models.BooleanField(default=1)
+            city = models.CharField(max_length=100, null=True)
+        ```
+
+- 关系表的数据操作
+    ```
+    from django.db.models import Count, Avg, Max, Min, Sum
+
+    def test(request):
+        # 新增
+        # Department(d_name='计算机学院').save()
+        # Department(d_name='外国语学院').save()
+        # Department(d_name='艺术学院').save()
+
+        # 新增数据
+        # s1 = Student(s_name='张三', department_id_id=1)
+
+        # 新增数据,并为外键赋值
+        # d1 = Department.objects.get(d_id=1)
+        # s1 = Student(s_name='李四')
+        # s1.department_id = d1 # 外键是一个实例
+        # s1.save()
+
+        # c1 = Course(c_name='Python')
+        # c1.save()
+        # Course.objects.create(c_name='Java')
+
+
+        d1 = Department.objects.get(d_id=1) # 计算机学院
+        s1 = Student.objects.get(s_id=2) # 张三
+        c1 = Course.objects.get(c_id=1) # Python
+        c2 = Course.objects.get(c_id=2) # Java
+        s2 = Student.objects.get(s_id=3) # 李四
+        #
+        # print(d1.student_set.all()) # 查询计算机学院d1在学生表中有多少条数据外键关联
+        # print(s1.department_id_id)
+
+        # add
+        # d2 = Department.objects.get(d_id=2) # 外国语学院
+        # d2.student_set.add(s1) # 将s1这个学生的外键改为外国语学院
+
+        # create
+        # d1.student_set.create(s_name='王五') # 添加一个学生,外键是计算机学院
+        # s1.course_set.create(c_name='Node') # 添加一个课程,并在中间信息表中把学生和课程关联
+
+        # add
+        # c2.student.add(s2) # 在中间表添加关系
+
+        # remove
+        # s2.course_set.remove(c2) # 删除关联表信息
+
+        # clear
+        # s1.course_set.clear() # 清空关联表中所有s1的数据
+
+        # 多表查询
+        Student.objects.filter(department_id__d_name='外国语学院') # 在学生表中查询名称为外国语学院的学生信息
+        Department.objects.filter(student__s_name__contains='李') # 查询学生名字中包含xx的学院名称
+        Department.objects.filter(student__course__c_name='Node')# 查询报了Node课程的学生的所属学院的信息
+
+        # 聚合查询
+        rs = User.objects.add().aggregate(Avg('age'))
+        
+        Student.objects.all().values('department').annotate(count=Count('department)).values('department', count) # 统计学院里学生的数量
+        # select count(*) 学生数量, department_id_id 学院ID from student_student ss GROUP BY department_id_id;
+
+        return HttpResponse('test')
+    ```    
+
+## 请求与相应
+- 请求
+    - 头
+        - `path` 路径,不包含域名
+        - `method` 请求方法
+        - `encoding` 编码方式
+        - `GET` 类似于字典的对象,包含get请求的参数
+        - `POST` 类似于字典的对象,包含post请求方式的所有参数
+        - `FILES` 一个类似于字典的对象,包含所有的上传文件
+        - `COOKIES` 一个标准的Python字典,包含所有的cookie,键值均为字符串
+        - `session` 一个既可读又可写的类似于字典的对象,表示当前的会话,只有当Django启用时才可用
+        - `is_ajax()` 判断是否是ajax请求
+    - 方法
+        ```
+        print(request.GET.get('a')) # 拿到一个值
+        print(request.GET.getlist('a')) # 拿到一个集合
+        print(request.path)
+        print(request.method)
+        print(request.COOKIES)
+        ```
+- 响应
+    - `HttpResponse()`返回简单的字符串对象
+    - `render()` 渲染模板
+    - `redirect()` 重定向
+    - `JsonResponse()`返回json数据
+    - 头
+        - `content` 返回的内容,字符串类型
+        - `charset` response采用的编码类型
+        - `status_code` 响应状态码
+        - `content-type` 指定输出的MIME类型
+    - 方法
+        ```
+        def test_json(request):
+        a = request.GET.get('a')
+        if int(a) == 2:
+            return JsonResponse({
+                'abc': 321
+            })
+        else:
+            return JsonResponse({
+                'error': '400'
+            })
+        ```
+## 文件上传
+    ```
+    from test_project.settings import MEDIA_ROOT
+    def upload(request):
+        if request.method == 'GET':
+            return render(request, 'upload.html')
+        elif request.method == 'POST':
+            f1 = request.FILES['file'] # file是表单中的name值
+            fs_name = os.path.join(MEDIA_ROOT, f1.name)
+            with open(fs_name, 'wb') as f:
+                for c in f1.chunks():
+                    f.write(c)
+            return HttpResponse('数据存入成功')
+
+    ``` 
+    
+## cookie和session
+- cookie
+    ```
+    def set_ck(request):
+        response = HttpResponse('setcookie')
+        response.set_cookie('a', 1)
+        return response
+
+    def get_ck(request):
+        response = HttpResponse('getcookie')
+        cookie = request.COOKIES
+        print(cookie.get('a'))
+        return response
+
+    def del_ck(request):
+        response = HttpResponse('delCookie')
+        response.delete_cookie('a')
+        return response
+    ```
+
+- session
+    - 在settings的installed_apps默认启用
+    - 在django_session表中保存session信息
+    - 默认两个星期过期
+    - 保存登录状态
+        ```
+        # 主页
+        def home(request):
+            username = request.session.get('username')
+            return render(request, 'home.html', context={
+                'username': username
+            })
+
+
+        # 登录
+        def login(request):
+            if request.method == 'GET':
+                return render(request, 'login.html')
+            elif request.method == 'POST':
+                username = request.POST.get('username')
+                password = request.POST.get('password')
+
+                # 用session保存状态,存入django-session表中
+                # 把表中的sessionid存入客户端的cookie中
+                request.session['username'] = username
+                return redirect(reverse('home'))
+
+        # 退出
+        def logout(request):
+            request.session.flush()
+            return redirect(reverse('login'))
+        ```
+    - 注册登录
+        - 注册
+            - views
+                ```
+                from .forms import RegisterForm, LoginForm
+                from .models import UserModel
+                # 注册
+                def register(request):
+                    if request.method == 'GET':
+                        form = RegisterForm() # 实例化表单
+                        return render(request, 'register.html', context={
+                            'form': form
+                        })
+                    elif request.method == 'POST':
+                        form = RegisterForm(request.POST)
+                        # 如果form表单信息合法
+                        if form.is_valid():
+                            username = form.cleaned_data.get('username')
+                            password = form.cleaned_data.get('password')
+                            password_repeat = form.cleaned_data.get('password_repeat')
+                            email = form.cleaned_data.get('email')
+                            if password_repeat == password:
+                                UserModel.objects.get_or_create(username=username, password=password, email=email)
+                                return HttpResponse('注册成功')
+                            else:
+                                return HttpResponse('注册失败')
+                        else:
+                            print(form.errors)
+                            return HttpResponse('注册失败')
+                ```
+            - forms
+                ```
+                class RegisterForm(forms.Form):
+                    username = forms.CharField(
+                        max_length=10,
+                        min_length=4
+                    )
+                    password = forms.CharField(
+                        max_length=20,
+                        min_length=6,
+                        widget=forms.PasswordInput(
+                            attrs={'placeholder': '请输入密码'}
+                        )
+                    )
+                    password_repeat = forms.CharField(
+                        widget=forms.PasswordInput()
+                    )
+                    email = forms.EmailField()
+                ```
+
+        - 登录
+            - views
+                ```
+                def loginxx(request):
+                    if request.method == 'GET':
+                        form = LoginForm()
+                        return render(request, 'login1.html', context={
+                            'form': form
+                        })
+                    elif request.method == 'POST':
+                        form = LoginForm(request.POST)
+                        if form.is_valid():
+                            username = form.cleaned_data.get('username')
+                            password = form.cleaned_data.get('password')
+                            user = UserModel.objects.filter(username=username)
+                            if user:
+                                if password == user[0].password:
+                                    request.session['username'] = username
+                                    return redirect(reverse('home'))
+                                else:
+                                    return render(request, 'login1.html', context={
+                                        'form': form,
+                                        'error': form.errors
+                                    })
+                            else:
+                                return redirect(reverse('register'))
+                ```
+            - forms
+                ```
+                class LoginForm(forms.Form):
+                    username = forms.CharField(max_length=10, min_length=4)
+                    password = forms.CharField(max_length=20, min_length=6)
+                ```
+
+## 中间件
+- Django中间件是一个轻量级的插件系统,可以介入Django的请求和响应处理过程,修改Django的输入和输出
+- settings中的MIDDLEWARE_CLASSES
+
+<img src='./images/middleware.png' width='80%'>
+
+- 第一种方法
+    - 在主目录中创建mymiddleware
+        ```
+        from django.utils.deprecation import MiddlewareMixin
+
+        class MyException(MiddlewareMixin):
+            def process_exception(self, request, exception):
+                print('自定义异常')
+                return HttpResponse(exception)
+        ```
+    - 在MIDDLEWARE中注册
+        - `'test_project.mymiddleware.MyException'`
+
+- 第二种方法
+    - 主目录的mymiddleware中设置
+        ```
+        from test_project.register.models import user
+        class UserMiddleware:
+            def __init__(self, get_response):
+                self.get_response = get_response
+
+            def __call__(self, request):
+                # request到达view视图之前执行的语句
+                username = request.session.get('username', '未登录')
+                userinfo = user.objects.filter(username=username).first()
+                if userinfo:
+                    setattr(request, 'myuser', userinfo.username)
                 else:
-                    return JsonResponse({
-                        'code': 0,
-                        'msg': '手机号或密码错误'
-                    })
-            else:
-                print(form.errors)
-                return JsonResponse({
-                    'code': 0,
-                    'msg': '手机号或密码校验失败'
-                })
+                    setattr(request, 'myuser', '未登录')
 
+                response = self.get_response(request)
+
+                # response到达用户浏览器之前执行的语句
+                return response
+        ```
+    - 在MIDDLEWARE中注册
+
+## 上下文处理器
+- 例如需要在每个视图中传递session信息
+- settings中的TEMPLATES保存着上下文处理器
+- 在主目录中设置mycontextprocess
+    ```
+    from test_project.register.models import user
+
+    def myuser(request):
+        username = request.session.get('username', '未登录')
+        userinfo = user.objects.filter(username=username).first()
+        if userinfo:
+            return {'myuser': userinfo.username}
+        else:
+            return {}
+    ```
+- 在TEMPLATES中注册
+
+
+## django admin系统
+- `python3 manage.py createsuperuser`
+- 在app的admin文件中
+    ```
+    from django.contrib import admin
+
+    from .models import Department, Student, Course, stu_detail
+
+    class dep_admin(admin.ModelAdmin):
+        list_display = ['d_id', 'd_name']
+        list_display_links = ['d_id', 'd_name']
+
+    admin.site.register(Department, dep_admin)
     ```
 
-
-## 注册
-- [Memcached](https://memcached.org/)
-    - 免费的,开源的,高性能的,分布式内存对象的缓存系统(键/值字典),旨在通过减轻数据库负载加快动态Web应用程序的使用
-    - 缺点: 无持久化(数据在内存中);不能做大对象缓存(例如图片,音频)
-    - 可以用来做验证码
-    - 安装
-        - `sudo apt install memcached`
-        - `ps aux | grep memcached`
-    - 启动
-        ```
-        # 通过这种方式启动,最好通过这种方式关闭
-        sudo service memcached start
-        sudo service memcached stop
-        sudo service memcached restart
-
-        # 最好使用
-        memcached -d -p 11211 -l 0.0.0.0 -u root -m 64m -c 512 -P /var/run/memcached.pid
-        # -d 守护进程
-        # -p 端口(默认11211)
-        # -l host地址(默认127.0.0.1)
-        # -u 指定用户
-        # -m 表示指定占用的内存
-        # -c 连接数(默认1024)
-        # -P 设置保存Memcached的Pid文件
-        ```
-    - 连接
-        - `telnet ip 11211`
-    - 操作
-        - `set`设置一个key
-            ```
-            set key flags(0) exptime bytes
-            value
-            # key: key的名字
-            # flags: 16位的无符号整数 一般写0
-            # exptime: 过期时间(秒)
-            # bytes: 存储的字节
-            示例:
-            set captcha 0 60 4
-            tzxw
-            成功返回STORED
-            失败返回ERROR
-            ```
-
-        - `add`添加
-            ```
-            add name 0 60 3
-            qwe
-            # 如果name存在则返回 NOT_STORED
-            ```
-        - `add`和`set`的区别
-            - `set`如果要设置的key已经存在,再次设置则是覆盖
-            - `add`如果存在会返回`NOT_STORED`,不存在则添加
-
-        - `get`获取
-            - 如果不存在,返回空
-            - `get key`
-        - `delete`删除
-            - 删除已经存在的key, 不存在则返回NOT_FOUND
-            - `delete key`
-            - `flush_all`删除所有数据
-            - `stats`查看状态
-    
-    - Python操作
-        - 使用`python-memcached`的包
-            - `pip install`
-        - python代码
-            ```
-            import
-            ```
-    
+## auth系统
+- `auth`数据库中开头的表
