@@ -34,3 +34,32 @@
 5. `globles()['name'] = 'Sam'` 直接命名法(globles()是个字典)
 6. `dir(__builtins__)`内置电池:常用的`str len`都在里面
 7. 先从`locals()`中寻找,再从`globles()`中,最后从`__builtins__`中寻找
+8. 小整数暂存区(-5 ~ 256)
+    ```
+    a=77;b=77
+    a is b#True   #小整数缓存池，只有同一个位置。目的是把常用的东西放在缓存池，减小开销
+    a=998;b=998
+    a is b#False
+    ```
+9. 字符驻留
+    ```
+    str_c='Python 3.5'
+    str_d='Python 3.5'
+    str_c is str_d#False 有些稍特殊的字符串，Python认为复用性不大，于是被分配到堆上，不会在内存池中检查。因此这是两个对象。内存地址不一样
+    ```
+10. 深浅拷贝
+    ```
+    import copy
+    a=[1,2,3,[4,5,6]]
+    b=a#赋值
+    c=copy.copy(a)#shallow copy
+    d=copy.deepcopy(a)#Deep copy
+    ```
+11. 列表推导式
+    - `[x + 1 for x in range(30) if x % 3 == 0]`
+12. `random.sample(list, num)`
+    ```
+    import random
+    a = [x for x in range(100)]
+    print(random.sample(a, 5))
+    ```
