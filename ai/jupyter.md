@@ -16,6 +16,8 @@
     - `%whos`
     - `%confing`
     - `%reset`
+    - `%debug`调试
+    - `%pdb on`出现错误直接进入调试
 
 2. cell magic ( 针对当前cell)
     - `%%timeit 50` 循环执行50次
