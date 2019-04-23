@@ -59,7 +59,7 @@
     ```
 12. 列表推导式
     - `[x + 1 for x in range(30) if x % 3 == 0]`
-13. `random.sample(list, num)`
+13. `random.sample(list, num)` 取样
     ```
     import random
     a = [x for x in range(100)]
