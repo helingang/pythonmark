@@ -1,12 +1,12 @@
 ## 基础
-1. `exec('print(1)')` 解析字符串
-2. `a = eval('2 * 2')` 解析表达式
-3. 交换赋值
+- `exec('print(1)')` 解析字符串
+- `a = eval('2 * 2')` 解析表达式
+- 交换赋值
     ```
     a, b=b, a
     print(a, b)
     ```
-4. 解包和收集
+- 解包和收集
     ```
     # unpack解包
     l1 = [1, 2, 3, 4, 5, '6']
@@ -31,12 +31,15 @@
     b, = l1  # 这里的意思是解l1这个包
     print(a, b)
     ```
-5. `globles()['name'] = 'Sam'` 直接命名法(globles()是个字典)
-6. `dir(__builtins__)`内置电池: 常用的`str len`都在里面
-7. `LEGB`
-    - `local–>enclosing–>global–>builtin`
-8. 先从`locals()`中寻找,再从`globles()`中,最后从`__builtins__`中寻找
-9. 小整数暂存区(-5 ~ 256)
+- `globles()['name'] = 'Sam'` 直接命名法(globles()是个字典)
+- `dir(__builtins__)`内置电池: 常用的`str len`都在里面
+- `LEGB`
+    - `local(最低)–>enclosing–>global–>builtin(最高)`
+    - `local` 一般是函数内部
+    - ``
+    - 先从`locals()`中寻找,再从`enclosing`中寻找,再从`globles()`中,最后从`__builtins__`中寻找
+    - 同一层楼中不能同名
+- 小整数暂存区(-5 ~ 256)
     ```
     a=77;b=77
     a is b  # True   #小整数缓存池,只有同一个位置.目的是把常用的东西放在缓存池,减小开销
@@ -44,13 +47,13 @@
     b = 998
     a is b  # False
     ```
-10. 字符驻留
+- 字符驻留
     ```
     str_c='Python 3.5'
     str_d='Python 3.5'
     str_c is str_d#False 有些稍特殊的字符串,Python认为复用性不大,于是被分配到堆上,不会在内存池中检查.因此这是两个对象.内存地址不一样
     ```
-11. 深浅拷贝
+- 深浅拷贝
     ```
     import copy
     a = [1, 2, 3, [4, 5, 6]]
@@ -58,16 +61,16 @@
     c = copy.copy(a)  # shallow copy
     d = copy.deepcopy(a)  # Deep copy
     ```
-12. 列表推导式
+- 列表推导式
     - `[x + 1 for x in range(30) if x % 3 == 0]`
-13. `random.sample(list, num)` 取样
+- `random.sample(list, num)` 取样
     ```
     import random
     a = [x for x in range(100)]
     print(random.sample(a, 5))
     ```
 
-14. `traceback` 追踪
+- `traceback` 追踪
     ```
     import traceback, sys
     try: 
@@ -77,7 +80,7 @@
         print(exc_type, exc_value, exc_traceback_obj)
         traceback.print_exc()
     ```
-15. 斐波那契数列
+- 斐波那契数列
     ```
     def fib(i): 
         n, a, b = 0, 0, 1
@@ -88,13 +91,33 @@
         return
     fib(6)
     ```
-16. 迭代器(有`__next__()`方法)一定是可迭代对象(可以使用`for`来遍历),可迭代对象不一定是迭代器
+- 迭代器(有`__next__()`方法)一定是可迭代对象(可以使用`for`来遍历),可迭代对象不一定是迭代器
 ## 函数
-1. 三元表达式
-2. 
+- 三元表达式
+- 偏函数(固定了部分参数的函数)
+    ```
+    import functools
+
+    a = int('10', base=32)
+    print(a)
+
+    int8 = functools.partial(int, base=8)
+    b = int8('10')
+    print(b)
+    ```
+    ```
+    import functools
+
+    def test(a=10):
+        print(a)
+    test()
+
+    test1 = functools.partial(test, a=20)
+    test1()
+    ```
 
 ## 扩展
-1. 栈和栈帧
+- 栈和栈帧
 
     ```
     import dis
@@ -125,7 +148,7 @@
         > **函数每次调用,都会新建栈帧**,用于局部变量和执行过程存储.执行完成后,栈帧内存被回收,同时释放相关对象.
 
 
-2. 栈帧对象PyFrameObject
+- 栈帧对象PyFrameObject
     ```
     def test(): 
         return id(locals())
