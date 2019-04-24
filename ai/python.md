@@ -126,7 +126,7 @@
 
 - `lambda` 匿名函数
 
-- `map reduce filter`内置高阶函数
+- `map reduce filter`内置高阶函数(参数是函数)
     - `map`映射函数
         ```
         l1 = [1, 2, 3, 4, 5]
@@ -151,6 +151,25 @@
 
 - 闭包
     - 通过`__closure__`属性来实现:所有的函数对象都有一个__closure__属性，如果它是一个闭包函数，那么它包含一个cell objects元组
+        ```
+        def o():
+            a = 'qwe'
+            def i():
+                print(a[:-2])
+                return a
+            return i
+
+        a = 'asd'
+        r = o()
+        print(o.__closure__)
+        print(r.__closure__)
+        print(r.__code__.co_freevars)
+
+        # None
+        # (<cell at 0x00000263C9907348: str object at 0x00000263C9846538>,)
+        # ('a',)
+        ```
+## 面向对象
 
 ## 扩展
 - 栈和栈帧
