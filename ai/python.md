@@ -32,11 +32,10 @@
     print(a, b)
     ```
 - `globles()['name'] = 'Sam'` 直接命名法(globles()是个字典)
-- `dir(__builtins__)`内置电池: 常用的`str len`都在里面
+- `dir(__builtins__)`内置电池: 常用的`str len`都在里面(`__builtins__.name = 'Sam'`)
 - `LEGB`
-    - `local(最低)–>enclosing–>global–>builtin(最高)`
-    - `local` 一般是函数内部
-    - ``
+    - `locals(最低)–>enclosing(闭包)–>globals–>builtin(最高)`
+    - `locals` 一般是函数内部
     - 先从`locals()`中寻找,再从`enclosing`中寻找,再从`globles()`中,最后从`__builtins__`中寻找
     - 同一层楼中不能同名
 - 小整数暂存区(-5 ~ 256)
@@ -115,6 +114,43 @@
     test1 = functools.partial(test, a=20)
     test1()
     ```
+- 修改函数的默认值
+    ```
+    def test(a=1, b=2):
+    print(a + b)
+
+    test() # 3
+    test.__defaults__=(3, 4)
+    test() # 7
+    ```
+
+- `lambda` 匿名函数
+
+- `map reduce filter`内置高阶函数
+    - `map`映射函数
+        ```
+        l1 = [1, 2, 3, 4, 5]
+        l2 = [11, 12, 13, 14, 15]
+
+        print(list(map(lambda x, y: x + y, l1, l2)))
+        # [12, 14, 16, 18, 20]
+        ```
+    - `reduce`
+        ```
+        from functools import reduce
+        l1 = [1, 2, 3, 4, 5]
+        print(reduce(lambda x,y:x*y,l1)) # 两两运算后返回value继续运算
+        ```
+    - `filter`过滤函数
+        ```
+        l1 = [1, 2, 3, 4, 5]
+        print(list(filter(lambda x:x>3,l1)))
+        print(list(filter(lambda x:True if x%2==0 else False,l1)))
+        ```
+- `sorted`函数
+
+- 闭包
+    - 通过`__closure__`属性来实现:所有的函数对象都有一个__closure__属性，如果它是一个闭包函数，那么它包含一个cell objects元组
 
 ## 扩展
 - 栈和栈帧
