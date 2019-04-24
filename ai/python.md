@@ -241,3 +241,6 @@
         import sys
         print(sys._current_frames())  # 返回一个dict,所有栈帧
         ```
+
+- 垃圾回收
+    - ⼀个对象的引⽤数为0,Python虚拟机就会回收这个对象的内存.当引⽤计数为0时，该对象⽣命就结束了
