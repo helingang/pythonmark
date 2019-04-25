@@ -148,6 +148,10 @@
         print(list(filter(lambda x:True if x%2==0 else False,l1)))
         ```
 - `sorted`函数
+    ```
+    d1 = sorted([('a', 1), ('b', 3), ('c', 6)], key=lambda x: x[1], reverse=True)
+    # [('c', 6), ('b', 3), ('a', 1)]
+    ```
 
 - 闭包
     - 通过`__closure__`属性来实现:所有的函数对象都有一个__closure__属性，如果它是一个闭包函数，那么它包含一个cell objects元组
@@ -172,6 +176,8 @@
 ## 面向对象
 - `isinstance(o, t)`
 - `issubinstance(cls, classinfo)`
+- 类方法
+- 静态方法(没有实例初始化的时候也能使用,没有实例变量)
 ## 扩展
 - 栈和栈帧
 
