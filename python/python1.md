@@ -796,27 +796,24 @@ print(a == b) # True
     1. `hasattr(类名/实例名, 'name')`
 
 ### 描述符
-- 某各类,只要是内部定义了方法`__get__`,`__set__`,`__delete__`中的一个或多个,就可以称之为描述符
+- 实现了对变量访问的控制
 ```
-class Base:
-    # self -> Base的实例
-    # instance -> A的实例
-    # owner -> A这个类
-    def __get__(self, instance, owner):
-        print('__get__')
-    def __set__(self, instance, value):
-        print('__set__')
-    def __delete__(self, instance):
-        print('__delete__')
+class Student:
+    def __init__(self, age):
+        self.__age = age
 
-class A:
-    # 属性是一个实例
-    base = Base()
+    @property # getter
+    def age(self):
+        return 0
 
-a = A()
-a.base
-a.base = 1
-del a.base
+    @age.setter # setter
+    def age(self, newAge):
+        self.__age = newAge
+
+s = Student(10)
+print(s.age) # 0
+s.age = 20
+print(s.age) # 0
 ```
 
 ### 装饰器
