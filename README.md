@@ -14,6 +14,7 @@
 - Python基础入门
     1. [jupyter](./ai/python/jupyter.md)
     2. [Python相关](./ai/python/python.md)
+    3. [Pandas](./ai/python/pandas.md)
 - 错题集
     - [Python](./ai/oj/python.md)
 
