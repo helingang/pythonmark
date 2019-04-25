@@ -11,9 +11,11 @@
 3. [数据分析和入门](./python/data.md)
 
 # AI
-1. Python基础入门
-    1. [jupyter](./ai/jupyter.md)
-    2. [Python相关](./ai/python.md)
+- Python基础入门
+    1. [jupyter](./ai/python/jupyter.md)
+    2. [Python相关](./ai/python/python.md)
+- 错题集
+    - [Python](./ai/oj/python.md)
 
 # 算法
 1. 排序

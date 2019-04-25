@@ -170,7 +170,8 @@
         # ('a',)
         ```
 ## 面向对象
-
+- `isinstance(o, t)`
+- `issubinstance(cls, classinfo)`
 ## 扩展
 - 栈和栈帧
 
