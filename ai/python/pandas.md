@@ -10,6 +10,8 @@
 - 取哪一列
     - `pd.salary`
     - `pd['salary']`
+- `apply(func, *args)` 对每一行的某列进行操作,操作内容在函数里
+    - `pd.salary.apply(test, 'qwe')`
 ## matplotlib
 <img src="./matplotlib/Matplotlib.png" style="width:100%">
 
