@@ -26,7 +26,7 @@
 
 - `DataFrames`
 
-- 案例
+- 案例1
     ```
     df = pd.read_csv('./DataAnalyst.csv', encoding='gb2312')
     arr = df.salary.str.split('-')
@@ -74,6 +74,38 @@
     #     counts = df.value_counts()
     #     return counts.sort_values(ascending=False)[:n]
     # print(df.groupby(['city']).companyShortName.apply(topN))
+    ```
+- 案例2
+    ```
+    df = pd.read_csv('./2016-us-ge-by-county.csv')
+    df.drop('StateCode', axis=1, inplace=True)
+    df.drop('CountyFips', axis=1, inplace=True)
+    # print(df)
+
+    trump_df = df[df.Candidate == 'Trump']
+    Castle_df = df[df.Candidate == 'Castle']
+
+    # print(trump_df.info())
+    # print(Castle_df.info())
+    # print(trump_df.head())
+    r_df = pd.merge(trump_df, Castle_df, on=['StateName', 'CountyName', 'CountyTotalVote'], suffixes=['_t', '_c'])
+    # print(r_df.columns)
+    r_df.drop('Party_t', axis=1, inplace=True)
+    r_df.drop('Party_c', axis=1, inplace=True)
+    r_df.drop('Candidate_t', axis=1, inplace=True)
+    r_df.drop('Candidate_c', axis=1, inplace=True)
+    # print(r_df.columns)
+    r_df.columns = ['StateName', 'CountyName', 'TotalVote', 'VoteTrump', 'VoteClinton']
+
+    # r_df.drop([0], inplace=True) # 删除第0行
+    # print(r_df.head(10))
+    # print(r_df.groupby(by='StateName').sum().head(10))
+    r_df = r_df.groupby(by='StateName', as_index=True).sum().head(100)
+    # print(r_df.groupby(by='StateName', as_index=True).sum().head(10))
+    r_df['t_ratio'] = r_df['VoteTrump'] / r_df['TotalVote']
+    r_df['c_ratio'] = r_df['VoteClinton'] / r_df['TotalVote']
+    r_df['winner'] = list(map(lambda x,y:'trump' if x > y else 'clinton',r_df['t_ratio'],r_df['c_ratio']))
+    print(r_df[['t_ratio', 'c_ratio', 'winner']])
     ```
 
 ## matplotlib
