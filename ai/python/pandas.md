@@ -299,3 +299,28 @@
     ```
 
 - 案例5
+    ```
+    df = pd.read_excel('./朝阳医院2016年销售数据.xlsx',sheet_name='Sheet1')
+
+    df = df.dropna(how='any', axis=0) # 遇到列有空值的时候删除这一行
+    df['社保卡号'] = df['社保卡号'].astype('str').apply(lambda x:x.split('.')[0]) # 处理社保卡号字段
+    df['购药时间'] = df['购药时间'].astype('str').apply(lambda x:x.split(' ')[0]) # 处理购药时间字段
+    df['购药时间'] = pd.to_datetime(df['购药时间']) # 购药时间转为日期类型
+    df.sort_values('购药时间')
+
+    # print(pd.Series.sum(df['销售数量'])) # 求一列的和
+    # print(len(df.drop_duplicates(['购药时间', '社保卡号']))) # 去重后求行数
+
+    drug_df = df.loc[:,['商品名称', '销售数量']]
+    drug_df = drug_df.groupby('商品名称')['销售数量'].sum().sort_values(ascending=False) # 求每种药卖了多少数量
+
+    date_df = df.drop_duplicates(['购药时间', '社保卡号'])
+    date_df = date_df.loc[:,['购药时间']]
+    date_df['count1'] = 1
+    date_df['weekday'] = date_df['购药时间'].dt.dayofweek
+    # date_df = date_df.weekday.value_counts()
+    # week_df = date_df.groupby('weekday')
+
+    week_df = date_df.groupby('weekday')['count1'].sum()
+    print(week_df)
+    ```
