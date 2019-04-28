@@ -15,7 +15,10 @@
     1. [jupyter](./ai/python/jupyter.md)
     2. [Python相关](./ai/python/python.md)
     3. [Pandas](./ai/python/pandas.md)
-- 
+- 数据结构
+    - [leetcode](https://leetcode.com/problemset/algorithms/)
+    - [算法初步](./ai/algorithm/base.md)
+    - [作业](./ai/algorithm/homework.md)
 
 
 # 算法
