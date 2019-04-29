@@ -18,6 +18,7 @@
 - 数据结构
     - [leetcode](https://leetcode.com/problemset/algorithms/)
     - [算法初步](./ai/algorithm/algorithm1.md)
+    - [数据结构](./ai/data/data1.md)
 
 
 # 算法
