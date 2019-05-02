@@ -21,7 +21,7 @@
     - 根节点 -> 左子树 -> 右子树
 
 
-<img src='./images/tree2.png'>
+<img src='./images/tree2.png' style='width:40%'>
 
 - 前序遍历(ABCDEFGHK)
 - 中序遍历(BDCAEHGKF)
@@ -37,9 +37,14 @@
         5. 弹出元素,加入返回队列ret
         6. root = root.right
 
+    
 
     3. 实现
+
+    <img src='./images/tree3.png' style="width:40%">
+
         ```
+        # 造树
         class BinaryTreeNode(object):
             def __init__(self, data=None, left=None, right=None):
                 self.data = data
@@ -52,7 +57,7 @@
         n5 = BinaryTreeNode(data="C", left=n3, right=None)
         root = BinaryTreeNode(data="A", left=n4, right=n5)
 
-
+        # 
         class Solution:
             def __init__(self):
                 self.ret = []
@@ -61,6 +66,7 @@
             @param root: The root of binary tree.
             @return: Preorder in ArrayList which contains node values.
             """
+            # 中序遍历
             def inorderTraversal(self, root):
                 # write your code here
                 if root is not None:
@@ -69,15 +75,65 @@
                     self.inorderTraversal(root.right)   # 遍历右子树
                 return self.ret
 
-            def loopVersion(self, root):    # 非递归版本
-                ret, stack = [], []
-                while root or stack:
-                    while root:
+            # 非递归的中序遍历
+            def zxtree(root):
+                ret = []
+                stack = []
+                while stack or root:
+                    if root:
                         stack.append(root)
                         root = root.left
-                    if stack:
+                    else:
                         root = stack.pop()
                         ret.append(root.data)
                         root = root.right
                 return ret
+
+            # 非递归的前序遍历
+            def preorderTraversal(root):  ## 前序遍历
+                stack = []
+                sol = []
+                while stack or root:
+                    if root:
+                        sol.append(root.data)
+                        stack.append(root.right)
+                        root = root.left
+                    else:
+                        root = stack.pop()
+                return sol
+
+            # 非递归的后序遍历
+            def postorderTraversal(root):  ## 后序遍历
+                stack = []
+                ret = []
+                while stack or root:
+                    if root:
+                        ret.append(root.data)
+                        stack.append(root.left)
+                        root = root.right
+                    else:
+                        root = stack.pop()
+                return ret[::-1]
+            
+        ```
+- 翻转二叉树
+    - 左子树和右子树交换位置
+    - 实现
+        ```
+        # 翻转二叉树非递归
+        def invertTree(root):
+            """
+            :type root: TreeNode
+            :rtype: TreeNode
+            """
+            if not root:
+                return None
+            nodeList = [root]
+            while nodeList:
+                node = nodeList.pop(0)
+                if node:
+                    nodeList.append(node.left)
+                    nodeList.append(node.right)
+                    node.left, node.right = node.right, node.left
+            return root
         ```
