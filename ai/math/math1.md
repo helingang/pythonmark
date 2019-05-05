@@ -13,7 +13,17 @@
 - 两边夹定理
     - 如果`f(x)<g(x)<h(x)`三个函数在a点都有极限,那么f,g,h在a点的极限分别`f <= g <= h`
 
-<img src='./img/math1_1.png' style='width:80%'>
+    <img src='./img/math1_1.png' style='width:80%'>
 
 - 微积分
+
+    <img src='./img/math1_2.png' style='width:80%'>
+
+    - 几何意义: 用直线逼近曲线
+    - 代数意义: 用线性函数逼近复杂函数
+
+- 常见导数
+
+    <img src='./img/math1_3.png' style='width:80%'>
+
     - 
