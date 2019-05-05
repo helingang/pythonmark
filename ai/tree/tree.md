@@ -120,20 +120,31 @@
     - 左子树和右子树交换位置
     - 实现
         ```
-        # 翻转二叉树非递归
-        def invertTree(root):
+        # 翻转二叉树递归
+        def invertTree(self, root):
             """
             :type root: TreeNode
             :rtype: TreeNode
             """
             if not root:
                 return None
-            nodeList = [root]
-            while nodeList:
-                node = nodeList.pop(0)
-                if node:
-                    nodeList.append(node.left)
-                    nodeList.append(node.right)
-                    node.left, node.right = node.right, node.left
+            newRoot = TreeNode(root.data)
+            newRoot.left = self.invertTree(root.right)
+            newRoot.right = self.invertTree(root.left)
+            return newRoot
+
+        # 翻转二叉树非递归
+        def invertTree(self, root):
+            if not root:
+                return
+            stack = [root]
+            while stack:
+                curr = stack.pop()
+                curr.left, curr.right = curr.right, curr.left
+                if curr.left:
+                    stack.append(curr.left)
+                if curr.right:
+                    stack.append(curr.right)
             return root
         ```
+    - 

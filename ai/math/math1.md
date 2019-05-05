@@ -25,5 +25,23 @@
 - 常见导数
 
     <img src='./img/math1_3.png' style='width:80%'>
+    <img src='./img/math1_4.png' style='width:90%'>
 
-    - 
+- n阶导数的导数就是n+1阶导数
+
+- 泰勒级数
+    - 做这个高精度逼近的原因?
+
+    <img src='./img/math1_5.png' style='width:90%'>
+
+
+- 多元函数的偏导数
+    <img src='./img/math1_6.png' style='width:90%'>
+- 多元函数的逼近
+    
+    - Lx和Ly分别指的是对x和对y的偏导数
+
+    <img src='./img/math1_7.png' style='width:90%'>
+
+- 梯度
+    - 梯度的几何意义: 梯度的方向就是增长最快的方向
