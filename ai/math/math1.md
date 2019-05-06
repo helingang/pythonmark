@@ -44,4 +44,9 @@
     <img src='./img/math1_7.png' style='width:90%'>
 
 - 梯度
+    - 梯度下降法
+    <img src='./img/math1_8.png' style='width:90%'>
+
     - 梯度的几何意义: 梯度的方向就是增长最快的方向
+    - 梯度的反方向: 减少最慢的方向
+    - 梯度下降: 找到局部最优点
