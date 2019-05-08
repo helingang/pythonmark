@@ -20,6 +20,7 @@
     - [算法初步](./ai/algorithm/algorithm1.md)
     - [数据结构](./ai/data/data1.md)
     - [树/堆](./ai/tree/tree.md)
+    - [图论](./ai/data/data2.md)
 
 - 高数
     - [微积分基本概念](./ai/math/math1.md)
