@@ -17,7 +17,8 @@ conda search
     - cmd中`jupyter-notebook`
 
 # numpy
-- 主要用于矩阵操作和运算
+- [练习题](https://github.com/rougier/numpy-100)
+<!-- - 主要用于矩阵操作和运算
 - 使用普通一维数组生成numpy一维数组
     ```
     l = [10, 11, 21]
@@ -43,7 +44,29 @@ conda search
         arr[0] = [1, 2, 3]
         ```
     - `np.empty(5)` 数组元素未初始化(可能有任何数字)
-    - `np.eye(3)`生成3x3的对角线矩阵
+    - `np.eye(3)`生成3x3的对角线矩阵 -->
+- `np.zeros()` 生成值为0的对象
+    - `np.zeros(4)`
+    - `np.zeros((2,3))`
+- `np.array(data)` 生成制定的数组
+- `np.linspace()` 生成连续n个元素的一维数组
+    - `np.linspace(0,20,5)` 一共5个元素
+- `n1.arange()` 生成连续的一维数组
+    - `n1.arange(0,20,1)` 1是步长
+- `n1.size` 获取元素的个数
+- `n1.reshape()` 修改n1的形状
+    - `np.zeros(6).reshape((2,3))`
+- `np.nonzero(n1)` 寻找一维数组不为0的下标
+    - `np.nonzero(np.array( [1,2,0,0,4,0]))`
+- `np.eye(n)` 生成n*n的数组
+- `np.full()`
+    - `np.full((3,4),1)` 生成3*4的数组,元素是1
+- `np.random.random()` 使用随机数生成数组
+    - `np.random.random((3,4))`
+- `n1.max();n1.min()`
+- `n1.mean()`
+
+
 
 
 - numpy数组也支持切片

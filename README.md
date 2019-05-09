@@ -23,7 +23,7 @@
     - [图论](./ai/data/data2.md)
 
 - 高数
-    - [微积分基本概念](./ai/math/math1.md)
+    - [微积分基本概念和进阶](./ai/math/math1.md)
 
 # 算法
 1. 排序

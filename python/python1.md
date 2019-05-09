@@ -1025,9 +1025,10 @@ def my_ge(num):
 ```
 
 # 正则
-- `re.findall(pattern, str)`
+- `re.findall('deCode', s, flags=re.IGNORECASE)`
     - 返回列表,包含匹配到的字符串
     - 未找到时返回空列表
+    - `flags=re.IGNORECASE` 忽略大小写
 - `re.match(pattern, str)`
     - 返回对象,从下标为0开始匹配,没有匹配到时返回None
     - group()表示匹配的值, span()表示匹配的下标
