@@ -65,7 +65,12 @@ conda search
     - `np.random.random((3,4))`
 - `n1.max();n1.min()`
 - `n1.mean()`
-
+- 创建边框为1,内部为0的二维数组
+    ```
+    n1 = np.full((10,10), 1)
+    n1[1:-1,1:-1] = 0
+    print(n1)
+    ```
 
 
 
