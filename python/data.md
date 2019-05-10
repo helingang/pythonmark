@@ -71,7 +71,31 @@ conda search
     n1[1:-1,1:-1] = 0
     print(n1)
     ```
+- 在二维数组外增加一个边框
+    ```
+    np.pad(np.full((3,3),1),1,'constant')
+    ```
+- `np.nan np.inf`
+    ```
+    print(0 * np.nan) # nan
+    print(np.nan == np.nan) # False
+    print(np.inf > np.nan) # False
+    print(np.nan - np.nan) # nan
+    print(np.nan in set([np.nan])) # True
+    print(0.3 == 3 * 0.1) # False
+    ```
+- `np.diag`
+    ```
+    np.diag(1+np.arange(4), k=-1) # k=-1: 低于对角线
 
+    [[0 0 0 0 0]
+     [1 0 0 0 0]
+     [0 2 0 0 0]
+     [0 0 3 0 0]
+     [0 0 0 4 0]]
+    ```
+
+- 
 
 
 - numpy数组也支持切片
