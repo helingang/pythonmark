@@ -48,9 +48,13 @@ conda search
 - `np.zeros()` 生成值为0的对象
     - `np.zeros(4)`
     - `np.zeros((2,3))`
+- `np.ones()` 生成值为1的数组
+    - `np.ones((2, 3))` 生成2*3数组,值为1
+- `np.full()`
+    - `np.full((3,4),1)` 生成3*4的数组,元素是1
 - `np.array(data)` 生成制定的数组
 - `np.linspace()` 生成连续n个元素的一维数组
-    - `np.linspace(0,20,5)` 一共5个元素
+    - `np.linspace(0,20,5)` 一共5个元素,均匀分配到0-20
 - `n1.arange()` 生成连续的一维数组
     - `n1.arange(0,20,1)` 1是步长
 - `n1.size` 获取元素的个数
@@ -59,10 +63,10 @@ conda search
 - `np.nonzero(n1)` 寻找一维数组不为0的下标
     - `np.nonzero(np.array( [1,2,0,0,4,0]))`
 - `np.eye(n)` 生成n*n的数组
-- `np.full()`
-    - `np.full((3,4),1)` 生成3*4的数组,元素是1
-- `np.random.random()` 使用随机数生成数组
-    - `np.random.random((3,4))`
+- `np.random` 使用随机数生成数组
+    - `np.random.random((3,4))` 生成3*4的数组
+    - `np.random.randint(0,10,(3,3))` 生成3*3的数组,值在区间[0,10)中
+    - `np.random.normal(0, 1, (3,4))` 生成均值为0,方差为1的3*4的数组
 - `n1.max();n1.min()`
 - `n1.mean()`
 - 创建边框为1,内部为0的二维数组
