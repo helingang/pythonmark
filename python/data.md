@@ -67,6 +67,7 @@ conda search
     - `np.random.random((3,4))` 生成3*4的数组
     - `np.random.randint(0,10,(3,3))` 生成3*3的数组,值在区间[0,10)中
     - `np.random.normal(0, 1, (3,4))` 生成均值为0,方差为1的3*4的数组
+- `np.empty((3,3))` 生成3*3数组,值是内存空间的任意值
 - `n1.max();n1.min()`
 - `n1.mean()`
 - 创建边框为1,内部为0的二维数组
