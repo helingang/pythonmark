@@ -113,6 +113,11 @@ conda search
     print(n1) # [3 4 0 0 2]
     ```
 
+- 运算
+    - `np.random.random((2,3)) + 2`
+    - `np.random.random((2,3)) + np.random.random((1,3))`
+    - `n1.sum() sum(n1) np.sum(n1, axis=0, keepdims=True)`
+    - `n1.dot(n2) np.matmul(n1, n2)` 矩阵乘法(建议用后者)
 
 
 
@@ -195,6 +200,7 @@ conda search
         }
         p = pd.Series(data=cities, name='hlgtest2')
 
+        print(p['Beijing':'Shenzhen'])
         print(p[['Beijing','Shanghai']])
         print(p[:-1] + p[1:]) # 对应的index相加
         print('sad' in p) # False
@@ -203,7 +209,30 @@ conda search
         print(p.median()) # 中位数
         print(p[p > p.median()])
         ```
+    - `p.describe()`
 
+- Dataframe 表格
+    - `pd.DataFrame(data, index=list('ABCDEF'))` data是个json格式,key是表格的列,value是一个Series
+    - `p.loc['A']` 取行
+    - `p.city p['city']` 取列
+    - `s.iloc[0:2, 0:2]` 取行和列(只能指定index)
+    - `s.loc[['A','C'],'city':'population']` 取A和C行,取city~population列
+    - `p.values` 返回numpy的二维数组
+    - 取值和赋值
+        - `s.at['A', 'city'] = 'BEIJING'`
+    - `s['westcity'] = s['city'] == 'Chongqing'`
+    - 加行
+    - `isnull` `notnull`
+        - `pk['Type 2'].isnull()` 查看`Type 2`这个字段为空有哪些,返回一个Series
+    - csv文件操作
+        - `pk = pd.read_csv('./Pokemon.csv')`
+        - `s = pd.read_csv('./GOOG.csv', index_col=0, parse_dates=['Date'])` 第0列当做index,把Date列转为日期类型
+        - `s.to_csv('./test.csv')`
+    - `reindex`
+        - `p.reindex(list('ABCDE'), fill_value=0)` 重新设置p的index值
+    - `drop`
+        - `s.drop(['A', 'C'])` 删除index为A和C的行
+        - `s.drop('city', axis=1)` 删除city列
 
 # Matplotlib
 - 流程式制图
