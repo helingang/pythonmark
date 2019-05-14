@@ -104,17 +104,17 @@ conda search
 
 
 - numpy数组也支持切片
-    - 注意二维数组的列数需相等否则会出现`IndexError`异常
-    - **对切片的任何修改会直接反映到源数组上**
-        ```
-        arr = np.array([[40, 50, 60], [60, 70, 80], [10, 20, 30]])
-        arr[:, 1] # 多重切片: 取三行的第二列
-        ```
+    ```
+    n1 = np.random.randint(0, 10, 5)
+    print(n1 > 9) # [False False  True False  True]
+
+    print(n1) # [3 4 9 0 2]
+    n1[n1 > 5] = 0
+    print(n1) # [3 4 0 0 2]
+    ```
 
 
-
-
-
+- 数学运算
 
 
 
