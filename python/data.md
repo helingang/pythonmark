@@ -100,7 +100,7 @@ conda search
      [0 0 0 4 0]]
     ```
 
-- 
+- `np.matmul(n1, n2)` 矩阵乘积
 
 
 - numpy数组也支持切片
@@ -124,7 +124,7 @@ conda search
 
 
 # pandas
-- 纳入了大量库和一些标准的数据模型,提供了高效地操作数据集所需的工具,pandas提供了大量能使我们快速便捷地处理数据的函数和方法
+<!-- - 纳入了大量库和一些标准的数据模型,提供了高效地操作数据集所需的工具,pandas提供了大量能使我们快速便捷地处理数据的函数和方法
 - `Series`有序并且有索引
     1. 用数组生成`Series`
         - `obj = pandas.Series([10, 20, 30], index = ['a', 'b', 'c'])`
@@ -176,7 +176,35 @@ conda search
         out.save()
         ```
 
-- 缺失数据处理
+- 缺失数据处理 -->
+
+- Series 一维的数据结构
+    - `pd.Series(data=, index=, name=)`
+        - data可以是list或者dict
+    - 类型是`pandas.core.series.Series`
+    - 使用numpy的一维数组构建Series
+        - `pd.Series(data=np.random.random(5), index=list('abcde'))`
+    - `s.astype(np.int)` 修改s中值的类型
+    - 操作Series
+        ```
+        cities = {
+            'Beijing': 55000,
+            'Shanghai': 60000,
+            'Shenzhen': 60000,
+            'Hangzhou': 30000,
+            'Guangzhou': 35000,
+            'Suzhou': None
+        }
+        p = pd.Series(data=cities, name='hlgtest2')
+
+        print(p[['Beijing','Shanghai']])
+        print(p[:-1] + p[1:]) # 对应的index相加
+        print('sad' in p) # False
+        print(p.get('beijing', 0))
+        print(gdp_less_50000 = p < 50000) # print(p[p < 50000])
+        print(p.median()) # 中位数
+        print(p[p > p.median()])
+        ```
 
 
 # Matplotlib
