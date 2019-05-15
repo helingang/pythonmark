@@ -234,6 +234,10 @@ conda search
         - `s.drop(['A', 'C'])` 删除index为A和C的行
         - `s.drop('city', axis=1)` 删除city列
 
+- groupby
+    
+
+
 # Matplotlib
 - 流程式制图
     - 绘制折线图`plt.plot`

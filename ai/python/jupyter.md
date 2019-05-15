@@ -14,7 +14,8 @@
 ### Magic开关
 1. line magic (针对全局)
     - `%whos`
-    - `%confing`
+    - `%config`
+        - `%config ZMQInteractiveShell.ast_node_interactivity='all'` 打印多行
     - `%reset`
     - `%debug`调试
     - `%pdb on`出现错误直接进入调试
