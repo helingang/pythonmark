@@ -233,9 +233,43 @@ conda search
     - `drop`
         - `s.drop(['A', 'C'])` 删除index为A和C的行
         - `s.drop('city', axis=1)` 删除city列
+    - `df1.corr()` 查看列与列的关系度
+    - `df1.info()` 查看dataframe的信息
 
-- groupby
+- groupby和aggregate
+    - `groupby`
+        - `df1.groupby(['Name','Year'], sort=False)` 返回groupby对象
+        - `group_by_name.groups` 查看分组
+        - `group_by_name.describe()`
+        - `group_by_name.get_group('Nan')`
+    - `aggregate` groupby之后一般要做一些aggregate操作
+        - `group_by_name.aggregate(sum)`
+        - `group_by_name.agg([np.sum,np.mean,np.std])` 每一列求sum,mean,std
+        - `group_by_name.agg({"Bonus": np.sum, "Salary": np.sum, "Year": (lambda x: list(x)[0])})` 对每列进行不同的聚合操作
+        - `group_by_name.aggregate(lambda x: list(x)[0])` 取每个分组的第一行
+        - 其他api
+            - `.size()` 每个分组展示计数
+            - `.mean()` 计算每个分组的平均值
+            - `.median()` 中位数
+
+
+- 表格的匹配与拼接
+
+
+- 项目
     
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 # Matplotlib
