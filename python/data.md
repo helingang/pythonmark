@@ -235,6 +235,7 @@ conda search
         - `s.drop('city', axis=1)` 删除city列
     - `df1.corr()` 查看列与列的关系度
     - `df1.info()` 查看dataframe的信息
+    - `df4.set_index("city")`
 
 - groupby和aggregate
     - `groupby`
@@ -253,11 +254,32 @@ conda search
             - `.median()` 中位数
 
 
-- 表格的匹配与拼接
+- filter
+    - SQL中的having和where
+        ```
+        df = pd.DataFrame({"A": np.arange(8), "B":list("aaabbbcc")})
+        df.groupby("B").filter(lambda x: x.A.sum() == 3)
+        ```
 
+- 表格的拼接
+    - `concat`
+        - 1
+            ```
+            df1 = pd.DataFrame({'apts': [55000, 60000],'cars': [200000, 300000],},index = ['Shanghai', 'Beijing'])
+            df2 = pd.DataFrame({'cars': [150000, 120000],'apts': [25000, 20000],},index = ['Hangzhou', 'Najing'])
+            df3 = pd.DataFrame({'apts': [30000, 10000],'cars': [180000, 100000],},index = ['Guangzhou', 'Chongqing'])
+            r1 = pd.concat([df1,df2,df3])
+            r = pd.concat([df1,df2,df3], keys=['x','y','z'])
 
-- 项目
-    
+            df4 = pd.DataFrame({'salaries': [10000, 30000, 30000, 20000, 15000]},index = ['Suzhou', 'Beijing', 'Shanghai', 'Guangzhou', 'Tianjin'])
+            r3 = pd.concat([df4,r1], sort=True, axis=1, join='inner')
+            ```
+        - 2
+            - `pd.concat([df1, s1], axis=1)`
+        
+    - `append`
+        - `df1.append(df2, sort=False)`
+        - `df1.append(s2)` append一个row到df中
 
 
 
