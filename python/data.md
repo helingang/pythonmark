@@ -225,7 +225,7 @@ conda search
     - `isnull` `notnull`
         - `pk['Type 2'].isnull()` 查看`Type 2`这个字段为空有哪些,返回一个Series
     - csv文件操作
-        - `pk = pd.read_csv('./Pokemon.csv')`
+        - `pk = pd.read_csv('./Pokemon.csv', sep=';')` 分隔符是`;`
         - `s = pd.read_csv('./GOOG.csv', index_col=0, parse_dates=['Date'])` 第0列当做index,把Date列转为日期类型
         - `s.to_csv('./test.csv')`
     - `reindex`
@@ -235,7 +235,8 @@ conda search
         - `s.drop('city', axis=1)` 删除city列
     - `df1.corr()` 查看列与列的关系度
     - `df1.info()` 查看dataframe的信息
-    - `df4.set_index("city")`
+    - `nvda.set_index('Date', inplace=True)`
+    - `df1.sort_values('Vol')`
 
 - groupby和aggregate
     - `groupby`
