@@ -282,6 +282,9 @@ conda search
         - `df1.append(df2, sort=False)`
         - `df1.append(s2)` append一个row到df中
 
+    - `merge`
+        - `pd.merge(df1, df4, on="city", how="right")`
+
 
 
 
