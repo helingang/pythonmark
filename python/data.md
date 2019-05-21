@@ -390,30 +390,113 @@ conda search
 
 
 - 通过pandas绘制
+    - 折线图
+        ```
+        nvda = pd.read_csv("data/NVDA.csv", index_col=0, parse_dates=[0])
+        nvda["Open"].plot()
+
+        df = pd.DataFrame(np.random.randn(10, 4))
+        df.plot()
+        ```
+
     - 条形图
         ```
-        df.plot.bar(figsize=(8,8))
-        # figsize 图形大小
-        # stacked=True # False 是否叠加到一根柱子上
+        df = pd.DataFrame(np.random.rand(10, 4), columns=list("abcd"))
+        df.plot.bar(figsize=(8,6))
+        # stacked=True 堆叠柱状图
+        # figsize=(8,6) 图形大小
+
+        df.plot.barh(stacked=True, figsize=(8,6), alpha=0.5)
+        # barh 水瓶条形图
         ```
 
     - 直方图
         ```
-        df
+        df = pd.DataFrame({"a": np.random.randn(1000)+1, "b":np.random.randn(1000), "c": np.random.randn(1000)-1})
+        df.plot.hist(bins=30, alpha=0.5)
+        # bins 箱子数量
+        # alpha 透明度
         ```
     
     - 箱型图
         ```
+        df = pd.DataFrame(np.random.rand(10, 5), columns=list("ABCDE"))
+        df.plot.box()
         # (离散点), 最大值, 上四分位, 中位数, 下四分位, 最小值, (离散点)
         ```
 
     - 区域块图形
         试一试堆积条形图
+        ```
+        df = pd.DataFrame(np.random.rand(10, 3), columns=list("ABC"))
+        df.plot.area()
+        ```
     
     - 散点图
+        ```
+        df = pd.DataFrame(np.random.randn(50, 4), columns=list("abcd"))
+        df.plot.scatter(x="a", y="b")
+
+        s = np.random.randn(100, 1)
+        a = 100 + s
+        b = 10 + s
+        df = pd.DataFrame(np.concatenate([a, b], 1), columns=list("ab"))
+        df.plot.scatter(x="a", y="b")
+        ```
 
     - 饼状图
+        ```
+        df = pd.DataFrame(
+            {
+                'mass': [0.330, 4.87 , 5.97],
+                'radius': [2439.7, 6051.8, 6378.1]
+            },
+            index=['Mercury', 'Venus', 'Earth']
+        )
+        df.plot.pie(y="mass")
+        ```
+
 
 - 使用matplotlib绘制
+    - 步骤
+        1. 导入 matplotlib 包相关工具包
+        2. 准备数据，numpy 数组存储
+        3. 绘制原始曲线
+        4. 配置标题、坐标轴、刻度、图例
+        5. 添加文字说明、注解
+        6. 显示、保存绘图结果
+    - 案例1
+        ```
+        import numpy as np
+        import matplotlib.pyplot as plt
+        import pandas as pd
+        import matplotlib as mpl
 
-- 
+        x = np.linspace(-np.pi,np.pi, 200)
+        s = np.sin(x)
+        c = np.cos(x)
+
+        plt.rcParams['font.family'] = ['SimHei']
+
+        ax = plt.subplot(111)
+        ax.spines['right'].set_color('none')
+        ax.spines['top'].set_color('none')
+        ax.spines['left'].set_position(('data',0))
+        ax.spines['bottom'].set_position(('data',0))
+
+        plt.plot(x,s, label=r'$y=sin{x}$',linewidth=2, linestyle=':')
+        plt.plot(x,c,label=r'$y=cos{x}$', linewidth=3,linestyle='--')
+
+        plt.xlim(x.min()*1.1, x.max()*1.1)
+        plt.xticks([-np.pi,-np.pi/2,0,np.pi/2,np.pi],[r'$-\pi$',r'$-\pi/2$',r'$0$',r'$\pi/2$',r'$\pi$'])
+        plt.ylim(c.min()*1.1, c.max()*1.1)
+        plt.yticks([1,-1],['$-1$','$-1$'])
+
+        plt.legend()
+        plt.title("正弦和余弦")
+
+        t = 2 * np.pi / 3
+        plt.scatter([t, ], [np.cos(t), ], 50, color='blue')
+        plt.plot([t, t], [0, np.cos(t)], color='blue', linewidth=1.5, linestyle="--")
+        plt.annotate(r'$\cos(\frac{2\pi}{3})$', xy=(t, np.cos(t)), xycoords="data", xytext=(-90, -50), textcoords='offset points', fontsize=16,arrowprops=dict(arrowstyle="->", connectionstyle="arc3,rad=.2"))
+        ```
