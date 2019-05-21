@@ -387,3 +387,33 @@ conda search
     plt.legend()
     plt.show()
     ```
+
+
+- 通过pandas绘制
+    - 条形图
+        ```
+        df.plot.bar(figsize=(8,8))
+        # figsize 图形大小
+        # stacked=True # False 是否叠加到一根柱子上
+        ```
+
+    - 直方图
+        ```
+        df
+        ```
+    
+    - 箱型图
+        ```
+        # (离散点), 最大值, 上四分位, 中位数, 下四分位, 最小值, (离散点)
+        ```
+
+    - 区域块图形
+        试一试堆积条形图
+    
+    - 散点图
+
+    - 饼状图
+
+- 使用matplotlib绘制
+
+- 
