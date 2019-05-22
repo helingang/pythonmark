@@ -251,6 +251,7 @@ conda search
         - `group_by_name.aggregate(lambda x: list(x)[0])` 取每个分组的第一行
         - 其他api
             - `.size()` 每个分组展示计数
+            - `.size().unstack()` 行列转换
             - `.mean()` 计算每个分组的平均值
             - `.median()` 中位数
 
@@ -500,3 +501,4 @@ conda search
         plt.plot([t, t], [0, np.cos(t)], color='blue', linewidth=1.5, linestyle="--")
         plt.annotate(r'$\cos(\frac{2\pi}{3})$', xy=(t, np.cos(t)), xycoords="data", xytext=(-90, -50), textcoords='offset points', fontsize=16,arrowprops=dict(arrowstyle="->", connectionstyle="arc3,rad=.2"))
         ```
+    - 
