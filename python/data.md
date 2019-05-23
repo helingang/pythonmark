@@ -233,6 +233,7 @@ conda search
     - `drop`
         - `s.drop(['A', 'C'])` 删除index为A和C的行
         - `s.drop('city', axis=1)` 删除city列
+    - `data4.dropna(subset=['age'],axis=0)` 指定列如果存在NaN则删除行
     - `df1.corr()` 查看列与列的关系度(接近1正相关,接近-1负相关,0时相关性很低)
     - `df1.info()` 查看dataframe的信息
     - `nvda.set_index('Date', inplace=True)`
