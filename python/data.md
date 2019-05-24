@@ -238,6 +238,7 @@ conda search
     - `df1.info()` 查看dataframe的信息
     - `nvda.set_index('Date', inplace=True)`
     - `df1.sort_values('Vol')`
+    - `tips["weekend"] = tips["day"].isin(["Sat", "Sun"])` 修改值为True或False
 
 - groupby和aggregate
     - `groupby`
@@ -503,3 +504,64 @@ conda search
         plt.annotate(r'$\cos(\frac{2\pi}{3})$', xy=(t, np.cos(t)), xycoords="data", xytext=(-90, -50), textcoords='offset points', fontsize=16,arrowprops=dict(arrowstyle="->", connectionstyle="arc3,rad=.2"))
         ```
     - 
+
+# Seaborn
+- `relplot` relationship关系图(散点图,折线图,置信区间)
+    - `sns.relplot(x="total_bill", y="tip", hue="smoker", style="smoker", data=tips)`
+        - 参数
+            1. hue: 根据某个column分成不同的颜色绘制, 当hue的值是数值类型时,调色盘会用颜色深浅来渐变
+            2. style: 为某个column绘制不同的scatter点
+    - `sns.relplot(x="total_bill", y="tip", size="size", sizes=(15, 200), data=tips)`
+        - 参数
+            1. size: 根据数字大小绘制不同的scatter点大小
+            2. sizes: 制定大小
+    - 折线图
+        ```
+        df = pd.DataFrame(dict(time=np.arange(500),value=np.random.randn(500).cumsum()))
+        sns.relplot(x="time", y="value", kind="line", data=df)
+
+        df = pd.DataFrame(np.random.randn(500, 2).cumsum(axis=0), columns=["x", "y"])
+        sns.relplot(x="x", y="y", kind="line", data=df);
+        sns.relplot(x="x", y="y", kind="line", data=df, sort=False); # 不排序
+        ```
+    - 置信区间([更多参数](https://seaborn.pydata.org/generated/seaborn.relplot.html))
+        ```
+        fmri = sns.load_dataset("fmri")
+        fmri.head()
+
+        sns.relplot(x="timepoint", y="signal", kind="line", data=fmri); # 针对这种同一个x对应多个y的情况，line plot会根据mean和95%的置信区间(confidence interval)来作图
+        sns.relplot(x="timepoint", y="signal", ci=None, kind="line", data=fmri); # 去掉置信区间
+        sns.relplot(x="timepoint", y="signal", kind="line", ci="sd", data=fmri); # 修改置信区间为标准差
+        sns.relplot(x="timepoint", y="signal", hue="event", kind="line", data=fmri);
+
+        # 更多参数
+        sns.relplot(x="timepoint", y="signal", hue="region", style="event",
+            dashes=True, markers=True, kind="line", data=fmri);
+        ```
+    
+- `catplot` categorical关系图(分类散点图,箱线图)
+    - `kind`参数: `point, bar, strip, swarm,box, violin, boxen`
+    - 分类散点图
+        ```
+        sns.catplot(x="day", y="total_bill", data=tips);
+        sns.catplot(x="day", y="total_bill", jitter=False, data=tips); # jitter=False每个数据点不摆动
+        sns.catplot(x="day", y="total_bill", kind="swarm",data=tips); # kind="swarm" 数据不堆叠
+        sns.catplot(x="day", y="total_bill", kind="swarm", data=tips, hue="sex"); 
+        sns.catplot(x="size", y="total_bill", kind="swarm", data=tips) # size是数字类型,会自动排序
+        sns.catplot(x="smoker", y="tip", data=tips, order=["No", "Yes"]); # 指定x轴的排序
+        sns.catplot(x="day", y="total_bill", hue="smoker", kind="box", data=tips); # hue颜色分类
+        ```
+    - 箱线图
+        ```
+        sns.catplot(x="day", y="total_bill", kind="box", data=tips);
+
+
+        diamonds = sns.load_dataset("diamonds")
+        diamonds.head()
+
+        sns.catplot(x="color", y="price", kind="boxen",data=diamonds.sort_values("color"));
+        ```
+    - 提琴图
+        ```
+        sns.catplot(x="day", y="total_bill", hue="time",kind="violin", data=tips);
+        ```
