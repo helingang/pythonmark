@@ -539,8 +539,9 @@ conda search
             dashes=True, markers=True, kind="line", data=fmri);
         ```
     
-- `catplot` categorical关系图(分类散点图,箱线图)
+- `catplot` categorical关系图(分类散点图,箱线图,提琴图,条形图,简单折线图)
     - `kind`参数: `point, bar, strip, swarm,box, violin, boxen`
+    - `color`参数: 
     - 分类散点图
         ```
         sns.catplot(x="day", y="total_bill", data=tips);
@@ -564,4 +565,67 @@ conda search
     - 提琴图
         ```
         sns.catplot(x="day", y="total_bill", hue="time",kind="violin", data=tips);
+        sns.catplot(x="day", y="total_bill", hue="sex", kind="violin", split=True, data=tips); # split 是否分割提琴图
+        sns.catplot(x="day", y="total_bill", hue="sex", kind="violin", inner="stick", split=True, palette="pastel", data=tips); # palette: 调色板控制, inner: 密度直线
+        ```
+    - 图画在一起
+        ```
+        g = sns.catplot(x="day", y="total_bill", kind="violin", inner=None, data=tips)
+        sns.swarmplot(x="day", y="total_bill", color="k", size=3, data=tips, ax=g.ax);
+        ```
+
+    - 条形图
+        ```
+        titanic = sns.load_dataset("titanic")
+        sns.catplot(x="sex", y="survived", hue="class", kind="bar", data=titanic);
+
+        sns.catplot(x="deck", kind="count", palette="ch:.25", data=titanic);
+        ```
+    - 点图(简单折线图)
+        ```
+        sns.catplot(x="sex", y="survived", hue="class", kind="point", data=titanic);
+        sns.catplot(x="class", y="survived", hue="sex", palette={"male": "g", "female": "m"}, markers=["^", "o"], linestyles=["-", "--"], kind="point", data=titanic);
+        ```
+
+    - 同时画几张图
+        ```
+        sns.catplot(x="day", y="total_bill", hue="smoker", col="time", aspect=.6, kind="swarm", data=tips);
+        ```
+- `distplot` distribution关系图()
+    - 灰度图
+        ```
+        x = np.random.normal(size=100)
+        sns.distplot(x, kde=True, bins=20, rug=True) # rug: 底部画出实例
+        ```
+    - 核密度估计
+        ```
+        sns.kdeplot(x)
+
+
+        # bandwidth的概念: 用于近似的正态分布曲线的宽度
+        sns.kdeplot(x, label="raw")
+        sns.kdeplot(x, bw=.2, label="bw: 0.2")
+        sns.kdeplot(x, bw=2, label="bw: 2")
+        plt.legend()
+        ```
+    - 双变量散点图
+        ```
+        mean, cov = [0, 1], [(1, .5), (.5, 1)]
+        data = np.random.multivariate_normal(mean, cov, 200)
+        df = pd.DataFrame(data, columns=["x", "y"])
+        sns.jointplot(x="x", y="y", data=df)
+        ```
+    - 数据集中的两两关系
+        ```
+        iris = sns.load_dataset("iris")
+        iris.head()
+
+        sns.pairplot(iris)
+        sns.pairplot(iris, hue="species");
+        ```
+
+- 
+    - 线性回归模型
+        ```
+        sns.lmplot(x="total_bill", y="tip", data=tips)
         ```
