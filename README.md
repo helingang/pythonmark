@@ -25,6 +25,7 @@
     - [图论](./ai/data/data2.md)
 - ml
     - [回归问题与应用](./ai/ml/ml1.md)
+    - [决策树与随机森林](/ai/ml/ml2.md)
 
 - 高数
     - [微积分基本概念和进阶](./ai/math/math1.md)
