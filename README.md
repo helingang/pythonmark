@@ -23,13 +23,13 @@
     - [数据结构](./ai/data/data1.md)
     - [树/堆](./ai/tree/tree.md)
     - [图论](./ai/data/data2.md)
+- ml
+    - [回归问题与应用](./ai/ml/ml1.md)
 
 - 高数
     - [微积分基本概念和进阶](./ai/math/math1.md)
     - [概率论](./ai/math/math2.md)
 
-- ml
-    - [回归问题与应用](./ai/ml/ml1.md)
 # 算法
 1. 排序
     - [几种排序方法](./sort/sort.md)
@@ -40,4 +40,4 @@
 3. Vue学习笔记
     - [Vue基础](./html/vue1.md)
     - [vue-cli](./html/vue2.md)
-    - [vue-router](./html/vue3.md) 
+    - [vue-router](./html/vue3.md)
