@@ -28,6 +28,8 @@
     - [微积分基本概念和进阶](./ai/math/math1.md)
     - [概率论](./ai/math/math2.md)
 
+- ml
+    - [回归问题与应用](./ai/ml/ml1.md)
 # 算法
 1. 排序
     - [几种排序方法](./sort/sort.md)
