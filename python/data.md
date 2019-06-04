@@ -62,7 +62,8 @@ conda search
     - `np.zeros(6).reshape((2,3))`
 - `np.nonzero(n1)` 寻找一维数组不为0的下标
     - `np.nonzero(np.array( [1,2,0,0,4,0]))`
-- `np.eye(n)` 生成n*n的数组
+- `np.eye(n)` 生成n*n的数组(对角线(左上-右下)为1,其他值为0)
+    - 与`np.identity()`相同
 - `np.random` 使用随机数生成数组
     - `np.random.random((3,4))` 生成3*4的数组
     - `np.random.randint(0,10,(3,3))` 生成3*3的数组,值在区间[0,10)中
@@ -226,6 +227,7 @@ conda search
         - `pk['Type 2'].isnull()` 查看`Type 2`这个字段为空有哪些,返回一个Series
     - csv文件操作
         - `pk = pd.read_csv('./Pokemon.csv', sep=';')` 分隔符是`;`
+        - `data = np.loadtxt('linear_regression_data1.txt', delimiter=',')`  分隔符是`,`
         - `s = pd.read_csv('./GOOG.csv', index_col=0, parse_dates=['Date'])` 第0列当做index,把Date列转为日期类型
         - `s.to_csv('./test.csv')`
     - `reindex`
