@@ -10,3 +10,5 @@
 
 - 总体流程
     <img src='./img/ml2-1.png'>
+- 熵
+    <img src='./img/ml2-2.png'>
