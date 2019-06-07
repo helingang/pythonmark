@@ -44,3 +44,27 @@
 
 - 三种树
     <img src='./img/ml2-10.png'>
+
+- 决策树的含义
+    <img src='./img/ml2-11.png'>
+
+    - RSS表示预估结果的好坏
+        - 尽量使RSS小
+        - 左边的sigma表示有切割了多少块,右边的sigma表示每一块的误差
+        <img src='./img/ml2-12.png'>
+
+- 回归树
+    - 递归二分
+        - 自顶向下的贪婪式递归方案
+        - 每一次在新的区域砍,而不管已经砍的区域
+        <img src='./img/ml2-13.png'>
+    - 回归树几种切割方式
+        <img src='./img/ml2-14.png'>
+    - 避免过拟合 添加正则项
+        <img src='./img/ml2-15.png'>
+
+
+- 随机森林
+    <img src='./img/ml2-16.png'>
+    <img src='./img/ml2-17.png'>
+
