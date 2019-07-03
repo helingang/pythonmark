@@ -28,6 +28,8 @@
     - [决策树与随机森林](/ai/ml/ml2.md)
     - [SVM](/ai/ml/ml3.md)
 
+    - [机器学习综述(ml8)](/ai/ml/ml6.md)
+
 - 高数
     - [微积分基本概念和进阶](./ai/math/math1.md)
     - [概率论](./ai/math/math2.md)
